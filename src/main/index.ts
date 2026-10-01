@@ -595,8 +595,9 @@ void app.whenReady().then(async () => {
 
   // Registration fails silently if another app already owns the combo; that is acceptable.
   globalShortcut.register('CommandOrControl+Shift+Space', toggleCapture)
-  globalShortcut.register('CommandOrControl+Shift+Q', () => {
-    const text = clipboard.readText()
+  globalShortcut.register('CommandOrControl+Shift+Q', async () => {
+    // Awaited: Electron 44 made readText asynchronous (on 43 the await is a no-op).
+    const text = await clipboard.readText()
     if (!text.trim()) return
     // Not getAllWindows()[0]: once quick capture has been opened it is a window too, and it has
     // no 'quote' listener — so the first use of Ctrl+Shift+Space silently killed Ctrl+Shift+Q

@@ -44,23 +44,23 @@
     "dist": "npm run build && electron-builder --publish never"
   },
   "devDependencies": {
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^5.2.0",
-    "electron": "^43.3.0",
+    "electron": "^44.4.5",
     "electron-builder": "^26.15.3",
     "electron-vite": "^5.0.0",
-    "esbuild": "^0.25.12",
-    "katex": "^0.18.1",
-    "marked": "^18.0.9",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
+    "esbuild": "^0.28.2",
+    "katex": "^0.18.9",
+    "marked": "^18.0.14",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "typescript": "^7.0.2",
     "vite": "^7.3.6"
   },
   "allowScripts": {
+    "electron@44.5.1": true,
     "esbuild@0.25.12": true,
-    "esbuild@0.28.1": true,
-    "electron@43.7.7": true
+    "esbuild@0.28.2": true
   }
 }
