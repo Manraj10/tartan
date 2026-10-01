@@ -1,0 +1,65 @@
+{
+  "name": "tartan",
+  "version": "0.1.0",
+  "description": "Your semester in one desktop app: classes, deadlines, notes with LaTeX, grades and course sites. Plain local files, no account.",
+  "main": "./out/main/index.js",
+  "author": "Manraj",
+  "license": "MIT",
+  "homepage": "https://github.com/Manraj10/tartan#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Manraj10/tartan.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Manraj10/tartan/issues"
+  },
+  "keywords": [
+    "electron",
+    "student",
+    "semester",
+    "calendar",
+    "notes",
+    "markdown",
+    "katex",
+    "grades",
+    "canvas",
+    "local-first",
+    "productivity"
+  ],
+  "//private": "Not an npm package — this flag only stops an accidental `npm publish`.",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "test": "node tests/day-plan.mjs && node tests/priority.mjs && node tests/grades.mjs && node tests/ical.mjs && node tests/feeds-import.mjs && node tests/course-import.mjs && node tests/notes.mjs && node tests/store.mjs && node tests/recurring.mjs && node tests/parse.mjs && node tests/sync.mjs",
+    "test:ui": "electron tests/electron-smoke.mjs",
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "start": "electron-vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.node.json",
+    "postinstall": "node node_modules/electron/install.js"
+  },
+  "dependencies": {
+    "katex": "^0.18.1",
+    "marked": "^18.0.9",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^5.2.0",
+    "electron": "^43.3.0",
+    "electron-vite": "^5.0.0",
+    "esbuild": "^0.25.12",
+    "typescript": "^7.0.2",
+    "vite": "^7.3.6"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true,
+    "esbuild@0.28.1": true,
+    "electron@43.7.7": true
+  }
+}

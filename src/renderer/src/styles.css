@@ -1,0 +1,2468 @@
+:root {
+  /*
+   * SURFACES. The old ramp was not too dark — it was too NARROW and too blue. Every live surface
+   * sat inside a 5.3-point lightness band pointed at hue 264, the coldest direction there is, and
+   * ~95% of the screen lived in that band. Depth had nowhere to come from.
+   *
+   * This spans 12.7 points at hue 67. Chroma is unchanged in magnitude (0.008–0.013 vs 0.009–0.012)
+   * — the app does not get more colourful, it stops pointing at blue.
+   */
+  /*
+   * Hue: the warm ramp above reads sepia — dingy, not premium. Graphite with a whisper of cool is
+   * the ground most dark-mode apps stand on. The 12-point lightness spread survives; only the hue
+   * moved.
+   */
+  --s0: #101114;  /* sunken: sidebar, note list, inputs, code */
+  --s1: #15171b;  /* canvas */
+  --s2: #1d2026;  /* cards, buttons, the editor sheet */
+  --s3: #262a31;  /* popovers, the palette, the status pill */
+
+  /* Aliases, so all 58 existing var(--bg*) call sites keep resolving with no TSX churn. */
+  --bg-inset: var(--s0);
+  --bg: var(--s1);
+  --bg-raised: var(--s2);
+  --surface: var(--s1);
+
+  /*
+   * BORDERS. The old --border measured 1.16:1 against a card — a third of Radix's 1.54, below the
+   * level where an edge survives to a real display. This was the single biggest cause of "flat".
+   * Alpha rather than hex so one token composites correctly on every surface step and on the
+   * course-tinted rows.
+   */
+  --border: rgba(255, 255, 255, 0.13); /* 1.45–1.51:1 */
+  --border-strong: rgba(255, 255, 255, 0.16); /* 1.61–1.68:1 */
+  --border-interactive: rgba(255, 255, 255, 0.36); /* ≥3.0:1 on every step — SC 1.4.11 */
+
+  /*
+   * TEXT. Three tiers, not four. The old --text ran 14.76:1, which halates on a near-black ground;
+   * the old --text-dim and --text-faint carried twice Radix's chroma, so the secondary text was
+   * itself the blue in the room.
+   */
+  --text: #e6e8eb; /* ~13:1 on the canvas */
+  --text-dim: #a9aeb6; /* ~7:1 — AA everywhere */
+  --text-faint: #8b919b; /* ~5:1 — AA for body text on s0–s2 */
+  --text-ghost: #8b919b; /* kept as an alias; a fourth tier signalled nothing */
+
+  /*
+   * ACCENT. Hue stays at CMU cardinal — that is identity. The warm ground closes the neutral-to-
+   * accent gap from 114° to 51°, which was the simultaneous-contrast problem, at no cost to the red.
+   * The fill/text split the file already claimed is now real: the fill darkens so white on it
+   * finally passes AA, the text tier stays bright.
+   */
+  --accent: #d23852; /* FILLS ONLY. #fff on it is 4.74:1 — was 3.86 and failing. */
+  --accent-text: #f16f7c; /* 5.82:1 — the only accent legal on a word or a ring */
+  --accent-dim: #822a36;
+  --focus: var(--accent-text);
+
+  /* --danger moves off #e8613c only because that was byte-identical to a course colour. */
+  --ok: #58b575;
+  --warn: #d3b13e;
+  --danger: #e86059;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-xs: 4px;
+  --sidebar-w: 240px;
+
+  /* One tracking for the small-caps label voice — it was 0.06/0.07/0.09 across five call sites. */
+  --ls-caps: 0.07em;
+
+  /* The stacking ladder. Values were scattered inline across seven files; a toast must never be
+     able to interleave with a modal again. */
+  --z-raised: 2;
+  --z-popover: 40;
+  --z-status: 60;
+  --z-modal: 100;
+
+  /*
+   * Real shadows, on top of the light-above insets — dark grounds need both: the inset says
+   * "this face catches light", the shadow says "this face floats". Deep and soft, never the
+   * generic 0 2px 4px.
+   */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 16px rgba(0, 0, 0, 0.22);
+  --shadow-2: 0 4px 10px rgba(0, 0, 0, 0.4), 0 18px 44px rgba(0, 0, 0, 0.35);
+
+  /* Windows 11 ships Segoe UI Variable and exposes its optical sizes as real family names, so
+     correct optical sizing costs three lines and no @font-face — the CSP is untouched. */
+  --font-small: 'Segoe UI Variable Small', 'Segoe UI', system-ui, sans-serif;
+  --font: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif;
+  --mono: 'Cascadia Code', 'JetBrains Mono', Consolas, monospace;
+
+  /* Six sizes, three weights. Before this there were 13 sizes in CSS and 10 more inline, so no
+     size meant anything. 550 and 650 are gone — Segoe has no such face and Chromium snapped them
+     to 600, which made "slightly bolder" silently identical to a heading. */
+  --fs-micro: 11px;
+  --lh-micro: 14px;
+  --fs-sm: 12px;
+  --lh-sm: 16px;
+  --fs-base: 14px;
+  --lh-base: 20px;
+  --fs-md: 15px;
+  --lh-md: 22px;
+  --fs-lg: 18px;
+  --lh-lg: 24px;
+  --fs-xl: 22px;
+  --lh-xl: 28px;
+  --fw-normal: 400;
+  --fw-med: 500;
+  --fw-bold: 600;
+
+  /* A 4px rhythm. The gutter is the one that pays: Today, Todos and Board used to start content
+     at three different x positions, so switching views made the page visibly jump. */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --gutter: 24px;
+
+  /* oklab, not srgb: these have to composite over the course-tinted rows too, and srgb mixing
+     leaves the tints perceptually mismatched. */
+  --hover: color-mix(in oklab, #fff 4%, var(--surface));
+  --selected: color-mix(in oklab, #fff 7%, var(--surface));
+
+  /* Overdue was a hex literal stranded in Today.tsx because the palette had nothing to offer. */
+  --overdue: #ef617f;
+
+  /*
+   * Course colour, derived at render time. courses.json holds hand-picked hexes and is NEVER
+   * rewritten by the app — but raw they span 4.03:1 to 7.03:1 on a card, which ranks the courses
+   * by accident of what was typed: amber reads urgent, purple reads disabled. Pinning lightness
+   * and clamping chroma both ways collapses that spread to under one point.
+   *
+   * The chroma FLOOR rescues a washed-out hex (C 0.069 looks greyed out). The CEILING stops a
+   * loud amber from shouting.
+   */
+  --dur-fast: 90ms;
+  --dur: 130ms;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Falls back to a grey mark when a row has no course. */
+@property --cc {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #96918c;
+}
+
+/*
+ * TWO LANES. Hue separation between the course colours and the semantic ones is not winnable
+ * — measured against a typical courses.json, every semantic token sits within 11° of a course and
+ * --danger once matched a course colour exactly. So they are separated by GEOMETRY instead:
+ *
+ *   left lane  (x = 0: the rail, the dot) carries identity, and never turns red for lateness;
+ *   right lane (the fixed metadata columns) carries state, and never carries identity.
+ *
+ * A red rail can then only mean a red course, and red date text can only mean overdue, because the
+ * two never share an x range. Every colour-carrying element also spells the course code out, since
+ * several course hues sit on the red-green axis and are not reliably separable.
+ */
+/*
+ * The derivation lives on the elements that use it, NOT on :root. An unregistered custom property
+ * substitutes its inner var() at the element where it is DECLARED and then inherits the result —
+ * so declaring --cc-mark on :root froze it to the @property fallback and every course came out the
+ * same grey-amber. Declared here, each element resolves against its own --cc.
+ */
+.course-chip {
+  border-left: 3px solid oklch(from var(--cc) 0.7 clamp(0.09, c, 0.13) h);
+  color: oklch(from var(--cc) 0.82 clamp(0.06, c, 0.1) h);
+  cursor: pointer;
+}
+
+.nav-item .dot,
+.course-dot {
+  background: oklch(from var(--cc) 0.7 clamp(0.09, c, 0.13) h);
+}
+
+/*
+ * Depth from light-above rather than shadow — shadows barely function on a dark ground. Only on
+ * surfaces with radius ≥ 8px; below that the inset arc reads as two bright corners.
+ */
+.card,
+.status-pill,
+.deadline {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  /* A perfectly flat 1401×901 fill is what makes a dark screen read as a void. Linear rather than
+     radial: a 3-unit spread over 1400px is exactly the case Chromium dithers, and the noise is far
+     more visible on a radial sweep. Top-down, so it agrees with the inset highlights above.
+     Delete this one line if it reads as banding on the panel — nothing else depends on it. */
+  background-image: linear-gradient(180deg, #1b1e24 0%, var(--s1) 46%);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--fs-base);
+  line-height: var(--lh-base);
+  /* Every date and count lines up in a column without asking. */
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+}
+
+/* The native date and time pickers render light-on-dark without this. */
+:root {
+  color-scheme: dark;
+}
+
+/* One focus ring for the whole app. The offset matters — inset on a 34px row reads as a border. */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: inherit;
+}
+
+/*
+ * Reads three JSON files off local disk. The delay means this element never actually paints
+ * unless something is genuinely stuck, so alt-tabbing cannot flash the whole app away and back.
+ * The reduced-motion block below overrides duration and iteration-count, not delay, so this
+ * still behaves correctly there.
+ */
+.deferred {
+  opacity: 0;
+  animation: reveal 1ms 160ms forwards;
+}
+
+@keyframes reveal {
+  to {
+    opacity: 1;
+  }
+}
+
+/* A failed read is a strip under the topbar, never a replacement for the view. */
+.banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  margin: var(--sp-3) var(--gutter) 0;
+  padding: var(--sp-3);
+  background: var(--s2);
+  border-left: 2px solid var(--danger);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-base);
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* ---------- layout ---------- */
+
+.shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  height: 100%;
+}
+
+.sidebar {
+  background: var(--bg-inset);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 14px 10px;
+  gap: 2px;
+}
+
+.sidebar-brand {
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.01em;
+  padding: 4px 8px 14px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.sidebar-brand span {
+  color: var(--text-faint);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* Now a real control: it labels the group AND collapses it. */
+.sidebar-label {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  width: 100%;
+  font-family: var(--font-small);
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  color: var(--text-faint);
+  padding: var(--sp-3) var(--sp-2) var(--sp-1);
+  font-weight: var(--fw-bold);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.sidebar-label:hover {
+  color: var(--text-dim);
+}
+
+/* A text glyph rotated in CSS — no icon package, and it inherits colour for free. */
+.sidebar-label::after {
+  content: '▾';
+  font-size: 9px;
+  transition: transform var(--dur) var(--ease);
+}
+
+.sidebar-label[aria-expanded='false']::after {
+  transform: rotate(-90deg);
+}
+
+/*
+ * The rows are conditionally rendered rather than CSS-hidden. The usual trick — animating
+ * grid-template-rows between 0fr and 1fr — did not interpolate in this Chromium build: the class
+ * toggled correctly but the computed track stayed one toggle behind, so a collapsed group kept its
+ * full height. A nav group that closes instantly is worth more than one that animates wrongly.
+ */
+.nav-group-body > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  width: 100%;
+  padding: var(--sp-1) var(--sp-2);
+  min-height: 30px;
+  border: 0;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-dim);
+  font-size: var(--fs-base);
+  line-height: var(--lh-base);
+}
+
+.nav-item:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+/* Selection is surface plus weight plus a rail — not an accent fill. That frees the loudest
+   colour in the palette to mean one thing only: this is overdue. */
+.nav-item.active {
+  background: var(--selected);
+  color: var(--text);
+  font-weight: var(--fw-med);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.nav-item .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.nav-item .count {
+  margin-left: auto;
+  font-family: var(--font-small);
+  font-size: var(--fs-micro);
+  color: var(--text-dim);
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 0 7px;
+  line-height: 16px;
+}
+
+/* The debt, visible from every view — Things' pattern. Gone at zero. */
+.nav-item .count.debt {
+  color: var(--overdue);
+  background: color-mix(in oklab, var(--overdue) 14%, transparent);
+  border-color: transparent;
+}
+
+/*
+ * One status line for the whole app, replacing five ad-hoc timers with disagreeing durations.
+ * Fixed, so it never participates in layout — the export confirmation used to render inside the
+ * sidebar's flex column and shove every nav row down for six seconds.
+ */
+.status {
+  position: fixed;
+  bottom: var(--sp-4);
+  left: calc(var(--sidebar-w) + var(--sp-4));
+  z-index: var(--z-status);
+  pointer-events: none;
+}
+
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  max-width: 560px;
+  padding: var(--sp-2) var(--sp-2) var(--sp-2) var(--sp-3);
+  background: var(--s3);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--ok);
+  border-radius: var(--radius);
+  font-size: var(--fs-base);
+  pointer-events: auto;
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+
+.status-pill.error {
+  border-left-color: var(--danger);
+}
+
+/* @starting-style gives the entrance with no mount flag and no transitionend listener. */
+@starting-style {
+  .status-pill {
+    opacity: 0;
+    transform: translateY(var(--sp-2));
+  }
+}
+
+.main {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-4) var(--gutter);
+  border-bottom: 1px solid var(--border);
+  flex: none;
+}
+
+/* Meta rides a full step below the headline it annotates — Linear's rule. At body size the
+   counts were competing with the 22px h1 they sit beside. */
+.topbar .muted,
+.topbar .faint {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-sm);
+}
+
+/* The view title is the loudest text on screen — a student app leads with the day, not a widget
+   label. Display face, tight tracking, real weight. */
+.topbar h1 {
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  line-height: var(--lh-xl);
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+/* Global on purpose: three scoped copies meant every other parent fell back to inline flex:1. */
+.spacer {
+  flex: 1;
+}
+
+/*
+ * The gutter is shared with .topbar and .banner, so the view title, the error strip and the first
+ * row all start at the same x — switching views no longer makes the page jump sideways.
+ *
+ * The measure cap is the other half: at 1400px a deadline row was a title on the far left and a
+ * date on the far right with a desert between them, and the eye has to cross it on every row.
+ */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--sp-5) var(--gutter);
+  min-height: 0;
+}
+
+.content > * {
+  max-width: var(--measure, 940px);
+}
+
+/* Grids and boards want the whole window; only reading columns are capped. */
+.content.wide > *,
+.content.flush > * {
+  max-width: none;
+}
+
+/* Flush panes nest (a course workspace renders Notes, which brings its own
+   topbar + content). Make them flex columns so the inner pane can still fill
+   instead of collapsing to its content height. */
+.content.flush {
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* ---------- primitives ---------- */
+
+.btn {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-interactive);
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+}
+
+.btn:hover {
+  border-color: var(--text-faint);
+  background: var(--s3);
+}
+
+/* A click should feel like a click. Transform, so it costs nothing to animate. */
+.btn:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: var(--fw-med);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+/* A pressed toggle is SELECTED, not committing — surface and weight, never the accent fill.
+   Doubled class beats .btn.ghost regardless of declaration order. */
+.btn.on,
+.btn.ghost.on {
+  background: var(--selected);
+  color: var(--text);
+  border-color: var(--border-interactive);
+}
+
+.btn.primary:hover {
+  filter: brightness(1.1);
+}
+
+.btn.ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-dim);
+}
+
+.btn.ghost:hover {
+  background: var(--bg-raised);
+  color: var(--text);
+}
+
+.btn.sm {
+  padding: 3px 8px;
+  font-size: var(--fs-sm);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.input,
+.select,
+.textarea {
+  background: var(--bg-inset);
+  border: 1px solid var(--border-interactive);
+  border-radius: var(--radius-sm);
+  padding: 6px 9px;
+  width: 100%;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: var(--accent-text);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 22%, transparent);
+}
+
+/* The stock Windows checkbox is the single fastest 'unfinished' tell on a dark app — its grey
+   sits on none of the four surface steps. Drawn from the app's own tokens instead: an s0 well
+   with the interactive border, filling cardinal with a white check. The most repeated control in
+   the app (Today, the overdue column, the grind table, Settings) upgrades in one block. */
+input[type='checkbox'] {
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  flex: none;
+  border: 1px solid var(--border-interactive);
+  border-radius: 4px;
+  background: var(--s0);
+  cursor: pointer;
+  transition:
+    background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+
+input[type='checkbox']:hover {
+  border-color: var(--text-faint);
+}
+
+input[type='checkbox']:checked {
+  border-color: var(--accent);
+  background: var(--accent)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.5l2.5 2.5 4.5-5' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / 10px no-repeat;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 35%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* These panes clip, so a ring drawn outside the box would be cut off. */
+.sidebar :focus-visible,
+.editor-split :focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--focus);
+}
+
+.card {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), var(--shadow-1);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--fs-micro);
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.muted {
+  color: var(--text-dim);
+}
+
+.faint {
+  color: var(--text-faint);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.empty {
+  color: var(--text-faint);
+  text-align: center;
+  padding: var(--sp-6) var(--gutter);
+  font-size: var(--fs-base);
+}
+
+.empty-headline {
+  margin: 0;
+  font-size: var(--fs-md);
+  line-height: var(--lh-md);
+  color: var(--text-dim);
+}
+
+.empty-detail {
+  margin: var(--sp-1) 0 0;
+  max-width: 46ch;
+  margin-inline: auto;
+}
+
+/* Finishing gets a quiet green rule instead of a call to action. */
+.empty-done .empty-headline {
+  color: var(--ok);
+}
+
+.section-title {
+  font-size: var(--fs-micro);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  color: var(--text-faint);
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+/* A stack already spaces its children; the title's own margin doubled the gap under it. */
+.stack > .section-title {
+  margin-bottom: 0;
+}
+
+/* Card prose stops at a readable measure; inputs and URL fields keep the full card. */
+.card p {
+  max-width: 70ch;
+}
+
+/* The raw square swatch was the one sharp-cornered chrome-default element on the card. */
+input[type='color']::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+input[type='color']::-webkit-color-swatch {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-xs);
+}
+
+/* ---------- deadlines ---------- */
+
+/*
+ * Fixed metadata columns. Before this the due date flowed inline after the kind and the course, so
+ * it sat at a different x on every row and "what is due soonest" had to be read rather than
+ * scanned. Named .lrow, NOT .row — .row is an existing generic flex utility used across views.
+ */
+.lrow {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto 84px 28px;
+  align-items: center;
+  column-gap: var(--sp-3);
+  padding: var(--sp-1) var(--sp-3);
+  min-height: 34px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+}
+
+.lrow:hover {
+  background: var(--hover);
+}
+
+/* A wrapped row destroys the grid, so long titles truncate and carry the full text on hover. */
+.lrow-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  cursor: text;
+}
+
+.lrow-edit {
+  min-width: 0;
+  padding: 2px var(--sp-1);
+}
+
+.lrow-course {
+  cursor: pointer;
+}
+
+.lrow-due {
+  text-align: right;
+  font-size: var(--fs-sm);
+  color: var(--text-faint);
+}
+
+.lrow.overdue .lrow-due {
+  color: var(--overdue);
+}
+
+.lrow-del {
+  opacity: 0;
+  padding: 0;
+  min-width: 24px;
+}
+
+.lrow:hover .lrow-del,
+.lrow:focus-within .lrow-del {
+  opacity: 1;
+}
+
+.lrow.done {
+  opacity: 0.45;
+}
+
+.lrow.done .lrow-title {
+  text-decoration: line-through;
+}
+
+.lrow input[type='checkbox'] {
+  margin: 0;
+}
+
+/*
+ * Red is spent on the DATE CHIP only (rule above); titles stay ink. Ten overdue items must read
+ * as ten quiet flags, not a wall of error state — and cardinal is also the brand accent, so
+ * confining urgency-red to date chips and the exam tint keeps the two meanings apart.
+ */
+
+.lrow-act {
+  font-size: var(--fs-sm);
+  padding: 2px 6px;
+}
+
+/* ---------- the overdue column ---------- */
+
+.overdue-card {
+  padding: 10px 12px;
+}
+
+.od-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 5px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.od-row:hover,
+.od-row:focus-within {
+  background: var(--hover);
+}
+
+.od-row input[type='checkbox'] {
+  margin-top: 2px;
+  flex: none;
+}
+
+.od-row.done {
+  opacity: 0.45;
+}
+
+.od-row.done .od-title {
+  text-decoration: line-through;
+}
+
+.od-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.od-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.od-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 20px;
+  font-size: var(--fs-sm);
+}
+
+/* Faint, not red: fourteen pink rows restating what the count pill already says were the
+   brightest text mass on the whole view. The header carries the alarm; the rows carry facts. */
+.od-when {
+  color: var(--text-faint);
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+}
+
+/* Out of flow: hidden verbs must not widen the row — they surface OVER the meta line on approach,
+   on the same --hover ground the row itself takes, so nothing shifts and nothing overflows. */
+.od-row {
+  position: relative;
+}
+
+.od-verbs {
+  position: absolute;
+  right: 4px;
+  bottom: 3px;
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  background: var(--hover);
+  border-radius: var(--radius-sm);
+}
+
+.od-row:hover .od-verbs,
+.od-row:focus-within .od-verbs {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.od-pile {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.od-pile:hover {
+  background: var(--hover);
+}
+
+.od-pile .pile-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  color: var(--text-dim);
+  font: inherit;
+  font-size: var(--fs-sm);
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.od-pile .pile-toggle .t {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.od-pile .lrow-act {
+  opacity: 0;
+  flex: none;
+}
+
+.od-pile:hover .lrow-act,
+.od-pile:focus-within .lrow-act {
+  opacity: 1;
+}
+
+.od-pile-items {
+  gap: 2px;
+  margin: 2px 0 4px 18px;
+}
+
+.od-hint {
+  margin: 8px 0 0;
+  font-size: var(--fs-micro);
+}
+
+.overdue-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  border: 0;
+  background: none;
+  padding: 4px 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.overdue-count {
+  font-family: var(--font-small);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  color: var(--overdue);
+  background: color-mix(in oklab, var(--overdue) 14%, transparent);
+  border-radius: 99px;
+  padding: 0 7px;
+  line-height: 16px;
+}
+
+
+.deadline {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-raised);
+}
+
+.deadline.done {
+  opacity: 0.45;
+}
+
+.deadline.overdue {
+  border-color: var(--accent-dim);
+}
+
+.deadline .title {
+  font-weight: 500;
+}
+
+/* Standalone, not scoped to .deadline — the board renders the same meta line on a .card. */
+.meta {
+  font-size: 12px;
+  color: var(--text-faint);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 1px;
+}
+
+.deadline input[type='checkbox'] {
+  margin-top: 3px;
+}
+
+/*
+ * Ctrl+\ gives the whole window to the work. Driving --sidebar-w rather than the grid directly
+ * means the fixed status region, which offsets from the same token, moves with it for free.
+ */
+.shell.rail-hidden {
+  --sidebar-w: 0px;
+}
+
+/* The grid column goes to zero, but the nav's own padding would still leave a visible sliver. */
+.shell.rail-hidden .sidebar {
+  overflow: hidden;
+  border-right: 0;
+  padding: 0;
+}
+
+/* A backlink that only shows a title makes you open the note to find out why it points here. */
+.backlink {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--text-dim);
+}
+
+.backlink:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.backlink-where {
+  display: block;
+  font-size: var(--fs-sm);
+}
+
+.backlink-line {
+  display: block;
+  font-size: var(--fs-base);
+  color: var(--text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- one-field capture ---------- */
+
+/* One 16px beat for every top-level block on Today — five different gaps was five opinions. */
+.quickadd {
+  margin-bottom: var(--sp-4);
+}
+
+.quickadd .input {
+  width: 100%;
+  font-size: var(--fs-md);
+  padding: var(--sp-2) var(--sp-3);
+}
+
+/* The picker row: the same result as the syntax, for anyone who would rather click than type. */
+.quickadd-opts {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  margin-top: var(--sp-2);
+}
+
+.quickadd-opts .input,
+.quickadd-opts .select {
+  width: auto;
+  font-size: var(--fs-sm);
+  padding: 4px 8px;
+}
+
+/* color-scheme: dark on :root already renders the picker glyphs light — no filter needed. */
+.quickadd-opts input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
+.day-chip {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--border-interactive);
+  background: var(--bg-inset);
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+
+.day-chip.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* Its own line under the relative date — the 84px due column stays a clean scannable spine
+   instead of "tomorrow · 10:00 AM" wrapping wherever it happens to break. */
+.lrow-at {
+  display: block;
+  color: var(--text-dim);
+}
+
+.lrow.overdue .lrow-at {
+  color: inherit;
+}
+
+/* The chips are what make the parser safe to trust: every guess is visible and reversible. */
+.quickadd-hint {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  margin-top: var(--sp-2);
+  font-size: var(--fs-sm);
+  min-height: 24px;
+}
+
+.quickadd-hint .chip {
+  cursor: pointer;
+  border-color: var(--border-interactive);
+}
+
+.quickadd-hint .chip:hover {
+  color: var(--text);
+  background: var(--hover);
+}
+
+/* ---------- todos ---------- */
+
+/* Deliberately lighter than a .deadline — no card, no box, a rule instead of a border. A todo
+   must never read as graded work at a glance, especially sitting under the deadlines on Today. */
+.todo {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 12px 7px 10px;
+  border-left: 2px solid var(--border-strong);
+  background: transparent;
+}
+
+.todo:hover {
+  background: var(--bg-raised);
+}
+
+.todo.done {
+  opacity: 0.45;
+}
+
+/* Content never renders smaller than chrome: a todo IS the work, the buttons are furniture. */
+.todo .title {
+  font-weight: 400;
+  font-size: var(--fs-base);
+}
+
+.todo input[type='checkbox'] {
+  margin-top: 2px;
+  accent-color: var(--text-dim);
+  cursor: pointer;
+}
+
+.todo.dragging {
+  opacity: 0.35;
+}
+
+/* Where the row would land. Inset so it reads as a gap opening up, not as a selected row. */
+.todo.drop-target {
+  box-shadow: inset 0 2px 0 var(--focus);
+}
+
+/* ---------- the grind table ---------- */
+
+.grind {
+  width: 100%;
+  /* The measure rule again: full-bleed put ~450px of dead space between a title and its Diff. */
+  max-width: 1100px;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+
+/* The app's largest table was its only hoverless list. */
+.grind tbody tr:hover td {
+  background: var(--hover);
+}
+
+.grind th {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-raised);
+  background: var(--bg);
+  text-align: left;
+  font-size: var(--fs-micro);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  color: var(--text-faint);
+  font-weight: 600;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border-strong);
+}
+
+.grind td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.grind tr.grind-topic td {
+  padding-top: 20px;
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-base);
+  color: var(--text);
+  border-bottom: 1px solid var(--border-strong);
+}
+
+.grind tr.is-done td {
+  opacity: 0.5;
+}
+
+.grind tr.is-done .grind-title {
+  text-decoration: line-through;
+}
+
+.grind tr.is-current td {
+  background: color-mix(in oklab, var(--accent) 7%, transparent);
+}
+
+.grind tr.is-current td:first-child {
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.grind-title {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.grind-title:hover {
+  color: var(--accent-text);
+}
+
+.grind-here {
+  margin-left: 10px;
+  color: var(--accent-text);
+  font-size: var(--fs-micro);
+}
+
+.grind-companies {
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.grind-link {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-faint);
+  font-size: var(--fs-micro);
+  padding: 1px 6px;
+  cursor: pointer;
+}
+
+.grind-link:hover {
+  color: var(--text);
+  border-color: var(--border-interactive);
+}
+
+/* ---------- the daily LeetCode rung ---------- */
+
+.lc {
+  padding: 10px 14px;
+}
+
+.lc-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.lc-label {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--text-faint);
+  font-weight: 600;
+}
+
+.lc-streak {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-dim);
+}
+
+.lc-body {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.lc-diff {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  flex: none;
+}
+
+/* The problem name is the link — one click and you are on leetcode.com in the browser. */
+.lc-title {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.lc-title:hover {
+  color: var(--accent-text);
+}
+
+/* Company names read as evidence, not decoration: quiet, bordered, tabular. */
+.lc-companies {
+  border: 1px solid var(--border);
+  background: var(--s0);
+  color: var(--text-dim);
+  cursor: help;
+}
+
+.lc-done {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 8px;
+  color: var(--text-faint);
+  font-size: var(--fs-sm);
+}
+
+.lc-done-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lc-undo {
+  background: none;
+  border: 0;
+  padding: 0 2px;
+  color: var(--text-faint);
+  cursor: pointer;
+  font: inherit;
+}
+
+.lc-undo:hover {
+  color: var(--danger);
+}
+
+/* A folded same-course pile on Today. Quieter than a real row — it is a summary, not a task. */
+.pile-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-dim);
+  font: inherit;
+  font-size: var(--fs-base);
+  text-align: left;
+  cursor: pointer;
+}
+
+.pile-row:hover {
+  background: var(--s2);
+  color: var(--text);
+}
+
+/* The palette row: the app's most-used control finally eases like everything else. Active state
+   rides aria-selected, which the component already sets — no per-render style objects. */
+.cmdp-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur) var(--ease);
+}
+
+.cmdp-item[aria-selected='true'] {
+  background: var(--bg-inset);
+}
+
+.cmdp-item:active {
+  transform: translateY(1px);
+}
+
+/* One chevron for the whole app — this exact pair existed three times, byte-identical. */
+.chev {
+  display: inline-block;
+  transition: transform var(--dur) var(--ease);
+  color: var(--text-faint);
+}
+
+.chev.open {
+  transform: rotate(90deg);
+}
+
+.pile-row .t {
+  flex: 1;
+  min-width: 0;
+}
+
+/* The timetable block: the same Notion-block recipe as .cal-event, through the same oklab mix
+   and oklch rail normalisation, so every hand-picked hex lands at one perceptual weight on
+   the schedule too. */
+.sched-block {
+  position: absolute;
+  background: color-mix(in oklab, var(--cc) 12%, var(--s1));
+  border-left: 3px solid oklch(from var(--cc) 0.7 clamp(0.09, c, 0.13) h);
+  border-radius: var(--radius-sm);
+  padding: 2px 5px;
+  overflow: hidden;
+  font-size: var(--fs-sm);
+  line-height: 1.3;
+}
+
+/* A permanent × button on every block was the loudest thing on the timetable. Appear on approach,
+   exactly like every other row's delete — and stay while confirming, or "Sure?" vanishes. */
+.sched-block .sched-del {
+  opacity: 0;
+}
+
+.sched-block:hover .sched-del,
+.sched-block:focus-within .sched-del {
+  opacity: 1;
+}
+
+/* ---------- calendar ---------- */
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+}
+
+/* The grid's structural axis earns one notch of weight over the in-cell wallpaper — and its
+   text shares the cells' 6px spine instead of sitting 2px adrift. */
+.cal-head {
+  padding: 6px;
+  font-size: var(--fs-micro);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  font-weight: var(--fw-bold);
+  color: var(--text-dim);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-inset);
+}
+
+.cal-cell {
+  /* Four classes plus two deadlines is a normal Monday — the old 104px cut it off. */
+  min-height: 132px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cal-cell.dim {
+  background: var(--bg-inset);
+}
+
+.cal-cell.dim .num {
+  color: var(--text-faint);
+}
+
+.cal-cell .num {
+  font-size: var(--fs-micro);
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.cal-cell.today .num {
+  color: #fff;
+  background: var(--accent);
+  border-radius: 99px;
+  width: 19px;
+  height: 19px;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+}
+
+/*
+ * The Notion Calendar block recipe: the course colour at ~12% as the fill, a 3px solid bar of it
+ * on the left edge, and the title tinted toward the same hue — never a saturated block, which on
+ * a dark ground glows and vibrates. Runs through the same oklch normalisation as .course-chip so
+ * every hand-picked hex lands at one perceptual weight.
+ */
+.cal-event {
+  font-size: var(--fs-micro);
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+  border-left: 3px solid oklch(from var(--cc) 0.7 clamp(0.09, c, 0.13) h);
+  background: color-mix(in oklab, var(--cc) 12%, var(--s1));
+  color: oklch(from var(--cc) 0.87 clamp(0.03, c, 0.07) h);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: default;
+}
+
+/*
+ * A subscribed event is not yours. No fill, quieter text, and no pointer — nothing about it
+ * should suggest you can drag it, tick it or edit it, because you cannot.
+ */
+.cal-event.feed {
+  background: transparent;
+  color: var(--text-faint);
+  cursor: default;
+}
+
+/*
+  The day's classes as one quiet line: a dot per class in its course colour, and a count. The
+  full timetable is the tooltip and the Schedule screen — five identical chips in every weekday
+  cell were wallpaper that buried the month's actual work.
+*/
+.cal-classline {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: var(--fs-micro);
+  color: var(--text-faint);
+  padding: 0 1px 1px;
+}
+
+.cal-classline .dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.cal-classline span:last-child {
+  margin-left: 2px;
+}
+
+/* An exam must not look like a survey. Course colour keeps the bar; the tint says "this one". */
+.cal-event.exam {
+  font-weight: 600;
+  background: color-mix(in srgb, var(--danger) 16%, var(--s2));
+}
+
+/* A collapsed same-course pile. The count is the message, so it reads like a total, not a title. */
+.cal-event.group {
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.cal-event[role='button']:hover {
+  background: color-mix(in oklab, var(--cc) 22%, var(--s1));
+}
+
+.cal-event.exam[role='button']:hover {
+  background: color-mix(in srgb, var(--danger) 24%, var(--s2));
+}
+
+/* The composer's list of what is already due that day. */
+.cal-daylist-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 3px 5px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cal-daylist-row:hover {
+  background: var(--s3);
+  color: var(--text);
+}
+
+.cal-daylist-row .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.cal-daylist-row .t {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The clock column: right-aligned and tabular so 9:00 am and 12:30 pm stack into a spine. */
+.cal-daylist-row .when {
+  flex: none;
+  width: 54px;
+  text-align: right;
+  font-size: var(--fs-micro);
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.cal-daylist-row .dot.ring {
+  background: transparent;
+  border: 1.5px solid var(--cc, var(--text-faint));
+  width: 7px;
+  height: 7px;
+  box-sizing: border-box;
+}
+
+/* Classes and subscribed events are facts, not controls — no hover invitation. */
+.cal-daylist-row.still {
+  cursor: default;
+}
+
+.cal-daylist-row.still:hover {
+  background: none;
+  color: var(--text-dim);
+}
+
+/* ---------- course workspace ---------- */
+
+.tabbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  /* First tab's text lands on the shared 16px gutter — three stacked bars, one left spine. */
+  padding: 0 var(--sp-1);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-inset);
+  flex: none;
+  overflow-x: auto;
+}
+
+.tab {
+  padding: 8px 12px;
+  border: 0;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-med);
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--text);
+}
+
+.tab.active {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+.webview-host {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+  background: #fff;
+}
+
+.webview-host webview {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- notes ---------- */
+
+.notes-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  flex: 1;
+  height: 100%;
+  min-height: 0;
+}
+
+.notes-list {
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 10px;
+  background: var(--bg-inset);
+}
+
+.note-item {
+  padding: 7px 9px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  color: var(--text-dim);
+}
+
+.note-item:hover {
+  background: var(--bg-raised);
+}
+
+.note-item.active {
+  background: var(--bg-raised);
+  color: var(--text);
+}
+
+.note-item .name {
+  font-size: var(--fs-base);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Two lines only when the match came from the body — the list must not reflow as you type. */
+.note-snippet {
+  margin-top: 2px;
+  font-size: var(--fs-sm);
+  color: var(--text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.note-item .when {
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+.editor-pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* "Nothing open." used to hug the top of a 1200px void — the flex column centers it for free. */
+.editor-pane > .empty {
+  margin-block: auto;
+}
+
+.editor-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex: 1;
+  min-height: 0;
+}
+
+.editor-split.single {
+  grid-template-columns: 1fr;
+}
+
+/*
+ * Writing surface. Two cheap borrowings from the focus-mode family that deliver most of its felt
+ * benefit without the fragile transparent-textarea-over-mirrored-pre trick:
+ *
+ *  - a measure cap, so a line never runs the full 1400px and the eye can find the next one;
+ *  - scroll padding, so the line you are typing settles near the middle of the pane instead of
+ *    being pinned to the bottom edge.
+ */
+.editor-area {
+  width: 100%;
+  height: 100%;
+  resize: none;
+  border: 0;
+  border-right: 1px solid var(--border);
+  background: var(--bg);
+  /*
+   * A textarea cannot take an inner max-width and an outer one shrinks the click target, so the
+   * measure is enforced with auto-padding. In a monospace context 1ch is exactly one glyph, so
+   * 68ch is literally 68 characters and matches the preview. Without this the pane ran ~115
+   * characters wide in edit mode and ~54 in split, so Ctrl+E reflowed every paragraph twice.
+   * max() returns 20px in split mode, where the pane is already narrow enough.
+   */
+  padding: 18px max(20px, calc((100% - 68ch) / 2)) 40vh;
+  font-family: var(--mono);
+  /* Matched to the preview. A 15% size jump plus a family change on every Ctrl+E made the two
+     panes disagree line-for-line and look permanently out of sync. */
+  font-size: var(--fs-md);
+  line-height: 1.65;
+  tab-size: 2;
+  caret-color: var(--accent-text);
+}
+
+.editor-area::selection {
+  background: color-mix(in srgb, var(--accent) 32%, transparent);
+}
+
+.preview {
+  overflow-y: auto;
+  padding: 18px 22px 40vh;
+  min-width: 0;
+}
+
+/* 68 characters is the readable measure; past that the return sweep starts losing the line. */
+.preview > * {
+  max-width: 68ch;
+}
+
+.preview p,
+.preview li {
+  font-size: var(--fs-md);
+  line-height: 1.65;
+}
+
+/*
+ * One em-relative rule for three sizes meant h3 got 18px of space above and h1 got 26px — the
+ * hierarchy of space ran backwards against the hierarchy of type. Fixed values on the 4px rhythm.
+ */
+.preview :is(h1, h2, h3, h4, h5, h6) {
+  letter-spacing: -0.01em;
+  scroll-margin-top: 18px;
+}
+
+.preview h1 {
+  font-size: var(--fs-xl);
+  margin: var(--sp-6) 0 var(--sp-2);
+}
+.preview h2 {
+  font-size: var(--fs-lg);
+  margin: var(--sp-5) 0 var(--sp-2);
+}
+.preview h3 {
+  font-size: var(--fs-md);
+  margin: var(--sp-4) 0 var(--sp-1);
+}
+
+/* h4–h6 had no rule at all, so they inherited Chromium's defaults and rendered at roughly body
+   size with browser margins right next to a 22px h1. */
+.preview :is(h4, h5, h6) {
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
+  color: var(--text-dim);
+  margin: var(--sp-4) 0 var(--sp-1);
+}
+
+.preview > :first-child {
+  margin-top: 0;
+}
+
+.preview code {
+  font-family: var(--mono);
+  font-size: var(--fs-sm);
+  background: var(--bg-inset);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.preview pre {
+  background: var(--bg-inset);
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  border: 1px solid var(--border);
+}
+
+.preview pre code {
+  background: none;
+  padding: 0;
+}
+
+.preview blockquote {
+  border-left: 2px solid var(--border-strong);
+  margin: 1em 0;
+  padding-left: 14px;
+  color: var(--text-dim);
+}
+
+.preview table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.preview th,
+.preview td {
+  border: 1px solid var(--border);
+  padding: 5px 9px;
+  text-align: left;
+}
+
+.preview a {
+  color: var(--accent-text);
+}
+
+.preview img {
+  max-width: 100%;
+}
+
+kbd,
+.kbd {
+  font: 11px/1 var(--mono);
+  padding: 2px 5px;
+  border-radius: var(--radius-xs);
+  background: var(--bg-raised);
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+/* ---------- motion ---------- */
+
+/* One list, whole app: half the surfaces easing while the other half snapped read as unfinished
+   more than either behaviour would alone. Opacity is in the property list so the hover-revealed
+   affordances (row deletes, overdue verbs, the note-open hint) fade instead of popping. */
+.btn,
+.deadline,
+.nav-item,
+.note-item,
+.tab,
+.cal-event,
+.pile-row,
+.todo,
+.lrow,
+.od-row,
+.od-pile,
+.overdue-head,
+.cal-daylist-row,
+.day-chip,
+.rail-row.class,
+.backlink,
+.grind-title,
+.grind-link,
+.lc-undo,
+.lrow-del,
+.od-verbs,
+.rail-note,
+.sched-del,
+.lc-title {
+  transition:
+    background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    color var(--dur) var(--ease),
+    opacity var(--dur) var(--ease),
+    transform var(--dur-fast) var(--ease),
+    box-shadow var(--dur) var(--ease);
+}
+
+/* Presses answer everywhere, not just on .btn — half the app's clicks felt dead beside it. */
+.nav-item:active,
+.tab:active,
+.note-item:active,
+.pile-row:active,
+.day-chip:active,
+.grind-link:active,
+.quickadd-hint .chip:active,
+.cal-event[role='button']:active,
+.od-row:active,
+.cal-daylist-row:active,
+.lrow-title:active {
+  transform: translateY(1px);
+}
+
+.input,
+.select,
+.textarea {
+  transition:
+    border-color 130ms var(--ease),
+    box-shadow 130ms var(--ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    /* not 0 — transitionend must still fire */
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* ---------- misc ---------- */
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 99px;
+  border: 3px solid var(--bg);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---------- the day rail (Today) ---------- */
+
+.rail {
+  display: flex;
+  flex-direction: column;
+}
+
+.rail-row {
+  display: grid;
+  grid-template-columns: 74px 14px minmax(0, 1fr);
+  column-gap: var(--sp-2);
+  align-items: baseline;
+  padding: 5px var(--sp-2) 5px 0;
+  position: relative;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  border-radius: var(--radius-sm);
+}
+
+.rail-time {
+  font-size: var(--fs-sm);
+  color: var(--text-faint);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* The spine: one continuous line, a dot per commitment. Dots take the course colour via --cc. */
+.rail-spine {
+  position: relative;
+  align-self: stretch;
+}
+
+.rail-spine::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: -5px;
+  bottom: -5px;
+  width: 2px;
+  background: var(--border);
+}
+
+.rail-row.class .rail-spine::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  margin-top: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cc, var(--text-faint));
+}
+
+/* Feed events get a hollow dot: on the calendar, but not a class you teach yourself to walk to. */
+.rail-row.event .rail-spine::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  margin-top: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid var(--cc, var(--text-faint));
+  box-sizing: border-box;
+}
+
+.rail-row.event.past {
+  opacity: 0.45;
+}
+
+.rail-row.event.current {
+  background: color-mix(in oklab, var(--cc) 13%, transparent);
+  box-shadow: inset 3px 0 0 var(--cc);
+}
+
+.rail-row.event.current .rail-until {
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+}
+
+.rail-event-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rail-row.due .rail-spine::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 50%;
+  margin-top: -3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+  background: var(--text-faint);
+}
+
+.rail-row.due.overdue .rail-spine::after {
+  background: var(--overdue);
+}
+
+.rail-body {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: baseline;
+  min-width: 0;
+}
+
+.rail-code {
+  font-weight: var(--fw-med);
+}
+
+/* Class rows open today''s lecture note; the affordance appears on approach, like lrow-del. */
+.rail-row.class {
+  cursor: pointer;
+}
+
+.rail-row.class:hover {
+  background: var(--hover);
+}
+
+.rail-note {
+  opacity: 0;
+  margin-left: auto;
+  font-size: var(--fs-sm);
+  flex: none;
+}
+
+.rail-row.class:hover .rail-note,
+.rail-row.class:focus-visible .rail-note {
+  opacity: 1;
+}
+
+.rail-row.class.past {
+  opacity: 0.45;
+}
+
+/* Past is dim at rest, but this is still a live control: approach restores full contrast, so the
+   focus ring and the note affordance never render at 0.45 of themselves. */
+.rail-row.class.past:hover,
+.rail-row.class.past:focus-visible {
+  opacity: 1;
+}
+
+/* The Notion block recipe, same as the calendar chips: ~12% fill plus a solid bar. */
+.rail-row.class.current {
+  background: color-mix(in oklab, var(--cc) 13%, transparent);
+  box-shadow: inset 3px 0 0 var(--cc);
+}
+
+.rail-row.class.current .rail-until {
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+}
+
+.rail-row.due.done .rail-due-title {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.rail-row.due.overdue .rail-due-title {
+  color: var(--overdue);
+}
+
+.rail-due-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.rail-row.gap .rail-body {
+  font-size: var(--fs-sm);
+}
+
+.rail-now {
+  display: grid;
+  grid-template-columns: 74px 14px minmax(0, 1fr);
+  column-gap: var(--sp-2);
+  align-items: center;
+  padding: 1px var(--sp-2) 1px 0;
+}
+
+.rail-now .rail-time {
+  color: var(--overdue);
+  font-size: var(--fs-micro);
+}
+
+.rail-now-line {
+  grid-column: 2 / 4;
+  height: 2px;
+  background: var(--overdue);
+  border-radius: 1px;
+}
+
+/* ---------- the grind heatmap ---------- */
+
+.heatmap {
+  display: grid;
+  grid-template-rows: repeat(7, 11px);
+  grid-auto-flow: column;
+  grid-auto-columns: 11px;
+  gap: 3px;
+}
+
+.heat {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  background: var(--bg-inset);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.heat.warm {
+  background: color-mix(in oklab, var(--ok) 45%, var(--bg-inset));
+  box-shadow: none;
+}
+
+.heat.hot {
+  background: var(--ok);
+  box-shadow: none;
+}
+
+.heat.today {
+  box-shadow: inset 0 0 0 1px var(--border-interactive);
+}
+
+.heat.future {
+  opacity: 0.3;
+}
+
+/* Daily workspace: work on the left, time and unfinished work on the right. */
+.sidebar { padding-top: 24px; }
+.nav-icon { flex: none; opacity: 0.8; }
+.nav-item { gap: 10px; min-height: 37px; }
+.nav-item.active .nav-icon { color: var(--accent-text); opacity: 1; }
+.space-name { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.space-name small { color: var(--text-faint); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 400; }
+.nav-group .nav-item { min-height: 48px; }
+.today-topbar { justify-content: space-between; padding-top: 22px; padding-bottom: 20px; border-bottom: 0; }
+.today-topbar h1 { font-size: 28px; line-height: 36px; letter-spacing: -0.035em; }
+.today-eyebrow { color: var(--text-faint); font-size: 12px; margin-bottom: 3px; }
+.content.today-dashboard { padding-top: 0; }
+.today-dashboard > * { max-width: 1600px; margin-left: auto; margin-right: auto; }
+.day-overview { border: 1px solid var(--border); border-radius: 14px; background: var(--s2); padding: 20px 22px 12px; margin-bottom: 26px; }
+.day-brief { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; align-items: center; gap: 24px; }
+.day-next { display: flex; flex-direction: column; gap: 3px; min-width: 0; border: 0; background: transparent; color: var(--text); text-align: left; padding: 5px 8px; margin: -5px -8px; border-radius: 8px; cursor: pointer; }
+.day-next:hover { background: var(--hover); }
+.day-next .section-title { margin: 0; font-size: 10px; }
+.day-next > strong { font-size: 18px; line-height: 25px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.day-next > .muted { font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.day-stat { display: flex; flex-direction: column; gap: 5px; padding-left: 24px; border-left: 1px solid var(--border); }
+.day-stat strong { font-size: 23px; font-weight: 600; letter-spacing: -0.025em; line-height: 28px; }
+.day-stat span { color: var(--text-faint); font-size: 11px; }
+.day-ribbon { height: 10px; position: relative; margin-top: 22px; background: var(--s0); border-radius: 4px; }
+.day-ribbon-block { position: absolute; height: 100%; border-radius: 3px; background: color-mix(in oklab, var(--cc) 65%, var(--s2)); border: 1px solid var(--s2); cursor: pointer; padding: 0; min-width: 3px; }
+.day-ribbon-block:hover { filter: brightness(1.4); }
+.day-ribbon-now { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--text); box-shadow: 0 0 0 2px var(--s2); }
+.day-ribbon-labels { position: relative; height: 16px; color: var(--text-faint); font-size: 10px; margin-top: 6px; }
+.day-ribbon-labels span { position: absolute; transform: translateX(-50%); }
+.day-ribbon-labels span:first-child { left: 0; transform: none; }
+.day-ribbon-labels span:last-child { right: 0; transform: none; }
+.today-workspace { display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 26px; align-items: start; }
+.today-main, .today-side { min-width: 0; }
+.today-main > * { max-width: none; }
+.today-side { display: flex; flex-direction: column; gap: 18px; }
+.work-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 13px; }
+.work-heading h2 { font-family: var(--font-display); font-size: 17px; font-weight: 600; letter-spacing: -0.02em; margin: 0; }
+.work-heading .select { width: auto; max-width: 155px; padding: 5px 9px; font-size: 12px; }
+.capture-card { padding: 12px; border: 1px solid var(--border-strong); border-radius: 12px; background: var(--s2); margin-bottom: 18px; }
+.capture-card .quickadd { margin-bottom: 0; }
+.capture-card .quickadd-input { background: transparent; border-color: transparent; }
+.capture-card:focus-within { border-color: var(--accent-text); }
+.work-card { background: color-mix(in oklab, var(--s2) 55%, var(--s1)); border: 1px solid var(--border); border-radius: 12px; padding: 18px 12px 6px; margin-bottom: 18px; }
+.work-card .section-title { display: flex; align-items: center; gap: 8px; padding: 0 8px; margin-bottom: 10px; color: var(--text-dim); font-size: 11px; }
+.section-count { display: inline-grid; place-items: center; min-width: 20px; padding: 0 5px; border-radius: 5px; background: var(--s3); font-size: 10px; }
+.work-card .lrow { min-height: 50px; padding: 8px; column-gap: 10px; border-bottom: 1px solid color-mix(in oklab, var(--border) 50%, transparent); border-radius: 5px; }
+.work-card .lrow-title { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 20px; }
+.work-card .lrow-due { color: var(--text-dim); font-size: 11px; }
+.work-card .todo { padding-left: 8px; padding-right: 8px; }
+.lookahead { padding: 15px 12px; }
+.lookahead summary { display: flex; justify-content: space-between; gap: 10px; cursor: pointer; font-size: 13px; font-weight: 500; list-style: none; }
+.lookahead summary::before { content: '›'; color: var(--text-faint); }
+.lookahead[open] summary::before { transform: rotate(90deg); }
+.lookahead summary .faint { margin-left: auto; font-size: 11px; font-weight: 400; }
+.lookahead[open] summary { margin-bottom: 20px; }
+.academic-notice { display: flex; gap: 12px; align-items: center; padding: 10px 12px; margin-bottom: 16px; border-left: 2px solid var(--warn); background: color-mix(in oklab, var(--warn) 5%, var(--s1)); font-size: 12px; border-radius: 0 8px 8px 0; }
+.academic-notice strong { margin-left: auto; color: var(--warn); flex: none; font-size: 11px; font-weight: 500; }
+.day-agenda { padding: 16px 14px 12px; }
+.day-agenda .work-heading { margin-bottom: 14px; }
+.day-agenda .work-heading > .faint { font-size: 11px; }
+.focus-opening { display: flex; flex-direction: column; gap: 5px; padding: 12px; border-radius: 8px; background: color-mix(in oklab, #7ebfab 8%, var(--s1)); border-left: 2px solid #7ebfab; }
+.focus-opening .section-title { margin: 0; font-size: 10px; color: #abd9ca; }
+.focus-opening strong { font-size: 14px; font-weight: 600; }
+.focus-opening > span:last-child { color: var(--text-dim); font-size: 11px; line-height: 16px; }
+.schedule-conflicts { margin: 12px 0 4px; padding: 8px 10px; background: color-mix(in oklab, var(--warn) 7%, var(--s1)); border-radius: 6px; font-size: 11px; }
+.schedule-conflicts summary { color: var(--warn); cursor: pointer; }
+.schedule-conflicts p { line-height: 17px; color: var(--text-dim); margin: 10px 0 4px; }
+.earlier-toggle { margin-top: 10px; }
+.all-day-events { margin-top: 14px; padding: 0 3px; }
+.all-day-events .section-title { font-size: 10px; }
+.all-day-events p { margin: 4px 0; font-size: 12px; color: var(--text-dim); }
+.day-agenda .rail { margin-top: 10px; max-height: 330px; overflow-y: auto; padding-right: 4px; scrollbar-gutter: stable; }
+.day-agenda .rail-row, .day-agenda .rail-now { grid-template-columns: 55px 10px minmax(0, 1fr); column-gap: 7px; }
+.day-agenda .rail-time { font-size: 10px; }
+.day-agenda .rail-row { padding: 8px 0; }
+.day-agenda .rail-body { display: block; min-width: 0; font-size: 12px; line-height: 18px; }
+.day-agenda .rail-body > .faint, .day-agenda .rail-until { display: block; font-size: 11px; }
+.day-agenda .rail-event-title, .day-agenda .rail-due-title { display: block; white-space: normal; overflow-wrap: anywhere; }
+.day-agenda .rail-note { display: none; }
+.day-agenda .rail-row.class:focus-visible .rail-note, .day-agenda .rail-row.class:hover .rail-note { display: block; }
+.today-side .overdue-card { padding: 13px 12px; }
+.today-side .overdue-card > .stack { max-height: 360px; overflow-y: auto; scrollbar-gutter: stable; }
+.today-side .od-row { padding: 9px 4px; }
+.today-side .od-title { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font-size: 12px; line-height: 18px; }
+.today-side .od-meta { margin-top: 4px; }
+.weekly-done { color: var(--text-dim); font-size: 12px; padding-left: 6px; }
+@media (max-width: 1150px) {
+  .today-workspace { grid-template-columns: minmax(0, 1fr) 305px; gap: 18px; }
+  .day-brief { gap: 14px; }
+  .day-stat { padding-left: 14px; }
+  .day-stat strong { font-size: 20px; }
+  .work-card .lrow { grid-template-columns: 16px minmax(0, 1fr) 68px 22px; }
+  .work-card .lrow-course { grid-column: 2; grid-row: auto; justify-self: start; font-size: 10px; }
+  .work-card .lrow-due { grid-column: 3; grid-row: 1; }
+  .work-card .lrow-del { grid-column: 4; grid-row: 1; }
+  .work-card .lrow > span:empty { display: none; }
+}
+@media (max-width: 950px) {
+  .today-workspace { grid-template-columns: 1fr; }
+  .today-topbar h1 { font-size: 24px; }
+  .day-brief { grid-template-columns: repeat(3, 1fr); }
+  .day-next { grid-column: 1 / -1; }
+  .day-stat { padding: 0; border: 0; }
+  .day-agenda .rail { max-height: none; }
+}
+@media (max-width: 650px) {
+  :root { --sidebar-w: 170px; --gutter: 12px; }
+  .space-name small { display: none; }
+  .today-topbar { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .today-topbar h1 { font-size: 21px; }
+  .day-overview { padding: 14px; }
+  .day-stat strong { font-size: 17px; }
+  .work-heading { flex-wrap: wrap; }
+}
+
+/* The month is a map; the selected day's full agenda has its own reading space. */
+.calendar-topbar { border-bottom: 0; justify-content: space-between; padding-top: 22px; padding-bottom: 18px; }
+.calendar-topbar h1 { font-size: 28px; line-height: 36px; }
+.calendar-controls { display: flex; align-items: center; gap: 6px; }
+.calendar-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin: 0 var(--gutter) 16px; font-size: 11px; color: var(--text-dim); }
+.calendar-toolbar label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.calendar-toolbar .select { width: auto; max-width: 160px; font-size: 12px; padding: 5px 9px; }
+.calendar-key { display: flex; gap: 6px; align-items: center; }
+.calendar-key i { width: 8px; height: 8px; border-radius: 2px; }
+.calendar-key-work { background: #9ba7ba; }
+.calendar-key-event { border: 1px solid #9ba7ba; }
+.content.calendar-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; align-items: start; gap: 22px; padding-top: 0; }
+.calendar-layout > * { max-width: none; min-width: 0; }
+.calendar-month { border-radius: 10px; overflow: hidden; }
+.calendar-layout .cal-grid { border-radius: 10px; overflow: hidden; }
+.calendar-layout .cal-head { text-align: center; font-size: 10px; padding: 10px 4px; background: var(--s2); }
+.calendar-layout .cal-cell { position: relative; min-height: 138px; padding: 6px; gap: 3px; background: color-mix(in oklab, var(--s2) 30%, var(--s1)); }
+.calendar-layout .cal-cell.weekend, .calendar-layout .cal-cell.dim { background: var(--s0); }
+.calendar-layout .cal-cell.selected { box-shadow: inset 0 0 0 2px var(--accent-text); background: color-mix(in oklab, var(--accent) 5%, var(--s1)); }
+.cal-day-target { position: absolute; inset: 0; width: 100%; background: transparent; border: 0; cursor: pointer; border-radius: 0; }
+.cal-day-target:hover { background: rgba(255,255,255,0.025); }
+.cal-day-target:focus-visible { outline-offset: -3px; }
+.cal-date-row { display: flex; align-items: center; justify-content: space-between; min-height: 24px; pointer-events: none; position: relative; margin-bottom: 3px; }
+.cal-date-row > span:last-child { font-size: 9px; color: var(--text-faint); }
+.calendar-layout .cal-cell .num { display: grid; place-items: center; width: 23px; height: 23px; font-size: 12px; }
+.calendar-layout .cal-classline { position: relative; pointer-events: none; font-size: 9px; min-height: 12px; margin-bottom: 2px; }
+.calendar-layout .cal-classline .dot { width: 4px; height: 4px; }
+.calendar-layout .cal-event { position: relative; z-index: 1; text-align: left; border-top: 0; border-bottom: 0; border-right: 0; width: 100%; min-height: 21px; font-size: 10px; line-height: 14px; padding: 3px 5px; cursor: pointer; flex: none; }
+.calendar-layout .cal-event:hover { background: color-mix(in oklab, var(--cc) 23%, var(--s1)); }
+.calendar-layout .cal-event.feed { border-left: 2px solid var(--cc); color: var(--text-dim); }
+.calendar-layout .cal-event.completed { opacity: 0.55; text-decoration: line-through; }
+.cal-more { position: relative; z-index: 1; background: transparent; color: var(--text-faint); text-align: left; padding: 1px 4px; border: 0; font-size: 10px; cursor: pointer; }
+.cal-more:hover { color: var(--text); text-decoration: underline; }
+.calendar-help { color: var(--text-faint); font-size: 11px; margin: 12px 2px; }
+.calendar-agenda { position: sticky; top: 0; border: 1px solid var(--border); border-radius: 12px; background: var(--s2); max-height: calc(100vh - 178px); overflow-y: auto; scrollbar-gutter: stable; padding: 16px 12px; }
+.calendar-agenda-header { display: flex; align-items: center; justify-content: space-between; padding: 0 4px 15px; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
+.calendar-agenda-header .section-title { display: block; font-size: 10px; margin: 0 0 3px; }
+.calendar-agenda-header h2 { font-size: 22px; line-height: 29px; font-weight: 600; letter-spacing: -0.03em; margin: 0; }
+.calendar-agenda .cal-daylist-row { display: grid; grid-template-columns: 51px 8px minmax(0, 1fr); align-items: baseline; column-gap: 8px; padding: 12px 4px; border-bottom: 1px solid var(--border); border-radius: 0; }
+.calendar-agenda .cal-daylist-row .t { white-space: normal; line-height: 19px; overflow-wrap: anywhere; font-size: 12px; color: var(--text); }
+.calendar-agenda .cal-daylist-row .t small { display: block; font-size: 10px; line-height: 16px; color: var(--text-faint); margin-top: 4px; }
+.calendar-agenda .cal-daylist-row .when { font-size: 10px; width: auto; }
+.calendar-editor { background: var(--s1); border: 1px solid var(--border-strong); border-radius: 8px; padding: 12px; margin-bottom: 14px; gap: 8px; }
+.calendar-editor .work-heading { margin-bottom: 0; }
+.calendar-editor h3 { font-size: 13px; margin: 0; }
+.calendar-editor label { font-size: 11px; color: var(--text-dim); }
+.calendar-editor .input, .calendar-editor .select { font-size: 12px; min-width: 0; }
+.calendar-editor-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 5px; }
+.calendar-editor-fields label { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+@media (max-width: 1200px) {
+  .content.calendar-layout { grid-template-columns: minmax(0, 1fr); }
+  .calendar-agenda { position: static; max-height: none; }
+  .calendar-layout .cal-cell { min-height: 150px; }
+}
+@media (max-width: 750px) {
+  .calendar-topbar { align-items: flex-start; flex-direction: column; gap: 12px; }
+  .calendar-topbar h1 { font-size: 24px; }
+  .calendar-layout .cal-cell { padding: 4px; min-height: 130px; }
+  .calendar-layout .cal-classline .dot, .cal-date-row > span:last-child { display: none; }
+  .calendar-toolbar { gap: 10px; }
+}

@@ -1,0 +1,7 @@
+node_modules/
+out/
+dist/
+output/
+
+# Calendar feeds can carry private tokens in their URLs and contents.
+*.ics
