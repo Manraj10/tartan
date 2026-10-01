@@ -1,5 +1,6 @@
 {
   "name": "tartan",
+  "productName": "Tartan",
   "version": "0.1.0",
   "description": "Your semester in one desktop app: classes, deadlines, notes with LaTeX, grades and course sites. Plain local files, no account.",
   "main": "./out/main/index.js",
@@ -39,21 +40,21 @@
     "build": "electron-vite build",
     "start": "electron-vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.node.json",
-    "postinstall": "node node_modules/electron/install.js"
-  },
-  "dependencies": {
-    "katex": "^0.18.1",
-    "marked": "^18.0.9",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "postinstall": "node node_modules/electron/install.js",
+    "dist": "npm run build && electron-builder --publish never"
   },
   "devDependencies": {
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^5.2.0",
     "electron": "^43.3.0",
+    "electron-builder": "^26.15.3",
     "electron-vite": "^5.0.0",
     "esbuild": "^0.25.12",
+    "katex": "^0.18.1",
+    "marked": "^18.0.9",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
     "typescript": "^7.0.2",
     "vite": "^7.3.6"
   },

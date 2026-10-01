@@ -78,6 +78,11 @@ import {
 } from '../shared/types'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+// A separate profile (config, login marker, browser sessions) for test runs and side-by-side builds.
+// Set before anything reads userData, and before the single-instance lock, which lives there too.
+if (process.env.TARTAN_USER_DATA) app.setPath('userData', path.resolve(process.env.TARTAN_USER_DATA))
+
 // Electron only loads an .ico on Windows; macOS and Linux need the .png.
 const iconFile = path.join(__dirname, '../../build', process.platform === 'win32' ? 'icon.ico' : 'icon.png')
 
@@ -462,8 +467,9 @@ if (!app.requestSingleInstanceLock()) {
  * covers reboots. Quit lives in the tray menu — the only path that really exits.
  */
 // Unpackaged, the exe is electron.exe and the app is an argument — the login item must carry
-// both or Windows boots a bare Electron shell. --hidden keeps the login launch out of the face.
-const loginArgs = [app.getAppPath(), '--hidden']
+// both or Windows boots a bare Electron shell. Installed, the exe IS Tartan. --hidden keeps the
+// login launch out of the face.
+const loginArgs = app.isPackaged ? ['--hidden'] : [app.getAppPath(), '--hidden']
 /** Its existence is the record that start-at-login has been decided, by us or by the tray checkbox. */
 const loginMarker = (): string => path.join(app.getPath('userData'), 'login-item.json')
 function markLoginAsked(): boolean {
@@ -499,6 +505,8 @@ const buildTrayMenu = (): Menu =>
     { type: 'separator' },
     {
       label: process.platform === 'win32' ? 'Start with Windows' : 'Start at login',
+      // Electron has no login items on Linux; a checkbox that does nothing is worse than none.
+      visible: process.platform !== 'linux',
       type: 'checkbox',
       checked: app.getLoginItemSettings({ path: process.execPath, args: loginArgs }).openAtLogin,
       click: (item) => {

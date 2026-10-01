@@ -1,0 +1,56 @@
+name: Bug report
+description: Something in Tartan does not work the way it should
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Please do not paste calendar feed URLs, `subscriptions.json` or
+        `config.json` here: they can contain private tokens.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you saw, including any message on screen.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open Today
+        2. Type "pset friday 5pm" and press Enter
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options: [Windows, macOS (Apple silicon), macOS (Intel), Linux]
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: How you run Tartan
+      options: [Installer from a release, From source (npm run dev or npm start)]
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The release you downloaded (for example 0.1.0), or the commit if you run from source.
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: Screenshots, or the relevant part of a data file with private details removed.

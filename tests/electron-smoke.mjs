@@ -29,6 +29,8 @@ process.argv.push('--hidden')
 // Without a handler, Electron shows a main-process crash as a modal error box on whoever's screen
 // this runs on. Fail the run instead, and never let a hang outlive the test.
 process.on('uncaughtException', error => { console.error(error); app.exit(1) })
+// Linux CI runners forbid the unprivileged user namespaces Chromium's sandbox needs.
+if (process.platform === 'linux' && process.env.CI) app.commandLine.appendSwitch('no-sandbox')
 setTimeout(() => { console.error('Smoke test timed out'); app.exit(1) }, 120_000).unref()
 const errors = []
 app.on('web-contents-created', (_, contents) => contents.on('console-message', event => {

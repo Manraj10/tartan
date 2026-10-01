@@ -146,5 +146,6 @@ for (const { size, buf } of pngs) {
 }
 
 fs.writeFileSync(path.join(dir, 'icon.ico'), Buffer.concat([header, ...entries, ...pngs.map((p) => p.buf)]))
-fs.writeFileSync(path.join(dir, 'icon.png'), pngs.find((p) => p.size === 256).buf)
-console.log('wrote icon.ico (' + SIZES.join(', ') + ') and icon.png')
+// 1024px: macOS packaging wants at least 512, and Linux desktops scale it down for menus and the tray.
+fs.writeFileSync(path.join(dir, 'icon.png'), encodePng(1024, render(1024)))
+console.log('wrote icon.ico (' + SIZES.join(', ') + ') and a 1024px icon.png')

@@ -1,8 +1,19 @@
 # Tartan
 
+[![CI](https://github.com/Manraj10/tartan/actions/workflows/ci.yml/badge.svg)](https://github.com/Manraj10/tartan/actions/workflows/ci.yml)
+[![Latest release](https://img.shields.io/github/v/release/Manraj10/tartan)](https://github.com/Manraj10/tartan/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/Manraj10/tartan/total)](https://github.com/Manraj10/tartan/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
 Your semester in one desktop app: classes, deadlines, notes with LaTeX, grades and your course
 sites, side by side. It runs on your machine and keeps everything as plain JSON and Markdown files
 you own. No account, no server, no subscription.
+
+**[Download for Windows](https://github.com/Manraj10/tartan/releases/latest/download/Tartan-Windows-Setup.exe)**
+· macOS ([Apple silicon](https://github.com/Manraj10/tartan/releases/latest/download/Tartan-macOS-arm64.dmg),
+[Intel](https://github.com/Manraj10/tartan/releases/latest/download/Tartan-macOS-x64.dmg))
+· Linux ([.deb](https://github.com/Manraj10/tartan/releases/latest/download/Tartan-Linux.deb),
+[AppImage](https://github.com/Manraj10/tartan/releases/latest/download/Tartan-Linux.AppImage))
 
 ![Today: what is due, what to start, your classes and free time](docs/screenshots/today.png)
 
@@ -22,7 +33,29 @@ you like.
 
 It was built for one student's semester at Carnegie Mellon and works for any school.
 
-## Quick start
+## Install
+
+Download the installer for your system from the
+[latest release](https://github.com/Manraj10/tartan/releases/latest). The installers are not
+code-signed yet, so the first launch needs one extra click:
+
+- **Windows**: run `Tartan-Windows-Setup.exe`. It installs for your user only, with no admin prompt.
+  If Windows shows "Windows protected your PC", choose **More info → Run anyway**.
+- **macOS**: open the `.dmg` and drag Tartan to Applications. The first time, macOS says it cannot
+  check the app; open **System Settings → Privacy & Security** and choose **Open Anyway**. Use the
+  `arm64` file on Apple silicon (M1 and later) and `x64` on Intel Macs.
+- **Linux**: on Debian or Ubuntu, `sudo apt install ./Tartan-Linux.deb`. Anywhere else, make the
+  AppImage executable (`chmod +x Tartan-Linux.AppImage`) and run it. If an AppImage closes straight
+  away on Ubuntu 24.04 or later, run it with `--no-sandbox`, or use the `.deb`.
+
+Each release lists SHA-256 checksums in `SHA256SUMS.txt`. Uninstalling never deletes your data
+folder or settings.
+
+Every installer is built and checked on GitHub's servers: CI runs the tests and a UI smoke test on
+Windows, macOS and Linux, and the release workflow launches each packaged app before publishing it.
+Day-to-day use so far has been on Windows 11.
+
+### Run from source
 
 You need [Node.js](https://nodejs.org) 22.12 or newer.
 
@@ -35,10 +68,8 @@ npm run dev
 
 `npm install` ends by downloading the Electron runtime once (about 150 MB, 360 MB unpacked). If
 that download is interrupted, run `node node_modules/electron/install.js` to finish it.
-
-`npm run dev` is the one to use day to day. `npm run build` compiles into `out/` and `npm start`
-runs that build. There is no packaged installer yet, so you run it from this checkout. Tartan is
-developed and used daily on Windows 11; macOS and Linux should work but have not been tested.
+`npm run build` compiles into `out/`, `npm start` runs that build, and `npm run dist` builds an
+installer for the machine you are on into `dist/`.
 
 ## What it does
 
@@ -294,6 +325,8 @@ Worth knowing before you run it, because a desktop app that lives in the backgro
 - **Site tabs are real browser views.** Signing into Canvas or Gradescope inside a tab stores that
   session in Tartan's own profile, separate from your browser. A sign-in survives quitting Tartan only
   if the site sets a lasting cookie; sites that rely on session cookies ask again next time.
+- **The installer** puts Tartan in your user account only (on Windows, `%LOCALAPPDATA%\Programs\tartan`).
+  Uninstalling removes the app and leaves your data folder and settings in place.
 - **It writes only to your data folder** and its own config. It never phones home. Its own network
   calls are the calendar feeds you add, the course lookup described under Classes, and the Google
   address if you set one. The site tabs, and any image a note links to on the web, load the way they
@@ -321,8 +354,9 @@ starts the built app in a temporary profile with sample data and network request
 saving, editing, filtering, navigation, small windows and failed writes without touching your real
 files.
 
-Bug reports and pull requests are welcome on
-[GitHub Issues](https://github.com/Manraj10/tartan/issues).
+Bug reports and pull requests are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md), and report
+security problems privately as described in [SECURITY.md](SECURITY.md). Changes are listed in
+[CHANGELOG.md](CHANGELOG.md).
 
 ## Credits
 

@@ -1,0 +1,109 @@
+name: Release
+
+# Push a tag such as v0.1.0 to build the installers on all three systems, check that each one
+# launches, and publish them as a GitHub release with notes from CHANGELOG.md. Running it by hand
+# (Actions → Release → Run workflow) does everything except publish: a dry run.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            target: --win
+          - os: macos-latest
+            target: --mac
+          - os: ubuntu-latest
+            target: --linux
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - name: Package
+        run: npx electron-builder ${{ matrix.target }} --publish never
+
+      - name: Install, launch and uninstall (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Start-Process -FilePath dist/Tartan-Windows-Setup.exe -ArgumentList '/S' -Wait
+          $exe = Get-ChildItem "$env:LOCALAPPDATA\Programs" -Recurse -Depth 2 -Filter Tartan.exe | Select-Object -First 1
+          if (-not $exe) { throw 'The installer did not install Tartan.exe' }
+          Write-Host "Installed at $($exe.FullName)"
+          node scripts/check-package.mjs $exe.FullName
+          if ($LASTEXITCODE -ne 0) { throw 'The installed app failed its launch check' }
+          $uninstaller = Get-ChildItem $exe.DirectoryName -Filter 'Uninstall*.exe' | Select-Object -First 1
+          Start-Process -FilePath $uninstaller.FullName -ArgumentList '/S' -Wait
+          Start-Sleep -Seconds 5
+          if (Test-Path $exe.FullName) { throw 'The uninstaller left Tartan.exe behind' }
+
+      - name: Launch check (macOS)
+        if: runner.os == 'macOS'
+        run: node scripts/check-package.mjs "dist/mac-arm64/Tartan.app/Contents/MacOS/Tartan"
+
+      - name: Launch check (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a -s "-screen 0 1920x1080x24" node scripts/check-package.mjs dist/linux-unpacked/tartan --no-sandbox
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: installers-${{ runner.os }}
+          path: |
+            dist/Tartan-Windows-Setup.exe
+            dist/Tartan-macOS-*.dmg
+            dist/Tartan-Linux.AppImage
+            dist/Tartan-Linux.deb
+          if-no-files-found: ignore
+
+  publish:
+    name: Publish the release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: installers
+          merge-multiple: true
+      - name: Checksums
+        working-directory: installers
+        run: |
+          ls -la
+          for f in Tartan-Windows-Setup.exe Tartan-macOS-arm64.dmg Tartan-macOS-x64.dmg Tartan-Linux.AppImage Tartan-Linux.deb; do
+            test -f "$f" || { echo "Missing $f"; exit 1; }
+          done
+          sha256sum * > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+      - name: Release notes from CHANGELOG.md
+        run: |
+          node -e '
+            const v = process.env.GITHUB_REF_NAME.replace(/^v/, "")
+            const text = require("fs").readFileSync("CHANGELOG.md", "utf8")
+            const start = text.indexOf("## [" + v + "]")
+            if (start < 0) { console.error("CHANGELOG.md has no section for " + v); process.exit(1) }
+            const rest = text.slice(start).split("\n").slice(1)
+            const end = rest.findIndex((l) => l.startsWith("## ["))
+            require("fs").writeFileSync("notes.md", rest.slice(0, end < 0 ? undefined : end).join("\n").trim() + "\n")
+          '
+          cat notes.md
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" installers/* --title "Tartan ${GITHUB_REF_NAME#v}" --notes-file notes.md
