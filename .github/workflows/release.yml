@@ -65,7 +65,7 @@ jobs:
           sudo chmod 4755 dist/linux-unpacked/chrome-sandbox
           xvfb-run -a -s "-screen 0 1920x1080x24" node scripts/check-package.mjs dist/linux-unpacked/tartan
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: installers-${{ runner.os }}
           path: |
