@@ -59,7 +59,11 @@ jobs:
 
       - name: Launch check (Linux)
         if: runner.os == 'Linux'
-        run: xvfb-run -a -s "-screen 0 1920x1080x24" node scripts/check-package.mjs dist/linux-unpacked/tartan --no-sandbox
+        # The .deb makes the sandbox helper setuid root; the unpacked build needs the same to run sandboxed.
+        run: |
+          sudo chown root:root dist/linux-unpacked/chrome-sandbox
+          sudo chmod 4755 dist/linux-unpacked/chrome-sandbox
+          xvfb-run -a -s "-screen 0 1920x1080x24" node scripts/check-package.mjs dist/linux-unpacked/tartan
 
       - uses: actions/upload-artifact@v4
         with:
