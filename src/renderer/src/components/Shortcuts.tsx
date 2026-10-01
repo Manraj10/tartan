@@ -1,17 +1,19 @@
 import { useEffect, useRef } from 'react'
+import { MOD } from '../keys'
 
 /** The one place to edit the cheat sheet. */
 const GROUPS: { group: string; rows: { keys: string[]; what: string }[] }[] = [
   {
     group: 'Global',
     rows: [
-      { keys: ['Ctrl', 'K'], what: 'Command palette' },
+      { keys: [MOD, 'K'], what: 'Command palette' },
       { keys: ['?'], what: 'This sheet' },
       // Ctrl+N and Ctrl+F used to be listed here and were handled nowhere. These two are real,
       // and quick capture had never been used once because nothing told anyone it existed.
-      { keys: ['Ctrl', 'Shift', 'Space'], what: 'Quick capture, from any app' },
+      { keys: [MOD, 'Shift', 'Space'], what: 'Quick capture, from any app' },
+      // Control on every system: Cmd+Shift+Q is the macOS Log Out shortcut.
       { keys: ['Ctrl', 'Shift', 'Q'], what: 'Quote your clipboard into the open note' },
-      { keys: ['Ctrl', '\\'], what: 'Hide the sidebar' },
+      { keys: [MOD, '\\'], what: 'Hide the sidebar' },
       { keys: ['Alt', '←'], what: 'Back, and Alt → forward' }
     ]
   },
@@ -35,10 +37,10 @@ const GROUPS: { group: string; rows: { keys: string[]; what: string }[] }[] = [
   {
     group: 'Notes',
     rows: [
-      { keys: ['Ctrl', 'S'], what: 'Force save' },
+      { keys: [MOD, 'S'], what: 'Force save' },
       { keys: ['/'], what: 'Slash commands' },
       { keys: ['[', '['], what: 'Link a note' },
-      { keys: ['Ctrl', 'E'], what: 'Cycle edit, split, preview' }
+      { keys: [MOD, 'E'], what: 'Cycle edit, split, preview' }
     ]
   },
   {

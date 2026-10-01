@@ -12,7 +12,10 @@ The first public release.
 
 - **Windows**: `Tartan-Windows-Setup.exe`. Installs for your user only, with no admin prompt.
 - **macOS**: `Tartan-macOS-arm64.dmg` for Apple silicon, `Tartan-macOS-x64.dmg` for Intel Macs.
-- **Linux**: `Tartan-Linux.deb` for Debian and Ubuntu, `Tartan-Linux.AppImage` for everything else.
+- **Linux**: `Tartan-Linux.deb` for Debian and Ubuntu, `Tartan-Linux.AppImage` for other
+  distributions.
+
+The Windows and Linux builds are 64-bit x86.
 
 The installers are not code-signed yet, so Windows and macOS ask once before the first launch. The
 README explains what to click.

@@ -61,23 +61,44 @@ try {
   const ws = new WebSocket(target.webSocketDebuggerUrl)
   await new Promise((resolve, reject) => {
     ws.onopen = resolve
-    ws.onerror = reject
+    ws.onerror = () => reject(new Error('Could not connect to the window'))
   })
   let id = 0
   const waiting = new Map()
   ws.onmessage = (m) => {
     const msg = JSON.parse(m.data)
-    waiting.get(msg.id)?.(msg)
+    waiting.get(msg.id)?.resolve(msg)
     waiting.delete(msg.id)
   }
+  // If the window or the app dies mid-check, fail now rather than hang until the job times out.
+  ws.onclose = () => {
+    for (const w of waiting.values()) w.reject(new Error('The window closed during the check'))
+    waiting.clear()
+  }
   const evaluate = (expression) =>
-    new Promise((resolve) => {
+    new Promise((resolve, reject) => {
       const n = ++id
-      waiting.set(n, (msg) => resolve(msg.result?.result?.value))
+      const timer = setTimeout(() => {
+        waiting.delete(n)
+        reject(new Error(`No answer from the window within 10 seconds: ${expression}`))
+      }, 10_000)
+      waiting.set(n, {
+        resolve: (msg) => {
+          clearTimeout(timer)
+          resolve(msg.result?.result?.value)
+        },
+        reject: (err) => {
+          clearTimeout(timer)
+          reject(err)
+        },
+      })
       ws.send(JSON.stringify({ id: n, method: 'Runtime.evaluate', params: { expression, awaitPromise: true, returnByValue: true } }))
     })
 
-  for (let i = 0; i < 80 && !(await evaluate(`!!document.querySelector('.today-dashboard')`)); i++) await sleep(250)
+  for (let i = 0; i < 80 && !(await evaluate(`!!document.querySelector('.today-dashboard')`)); i++) {
+    if (exited !== null) throw new Error(`Tartan exited with code ${exited} before Today rendered`)
+    await sleep(250)
+  }
   result.today = await evaluate(`!!document.querySelector('.today-dashboard')`)
   result.crashed = await evaluate(`document.body.innerText.includes('Something went wrong')`)
   result.spaces = await evaluate(`window.api.courses.get().then((c) => c.map((x) => x.code))`)

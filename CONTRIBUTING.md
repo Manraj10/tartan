@@ -15,6 +15,14 @@ npm run dev
 
 `npm run dev` starts the app with hot reload for the interface. Changes to `src/main` need a restart.
 
+On Ubuntu 24.04 and later, give Electron's sandbox helper root ownership once after `npm install`,
+or Electron refuses to start:
+
+```bash
+sudo chown root:root node_modules/electron/dist/chrome-sandbox
+sudo chmod 4755 node_modules/electron/dist/chrome-sandbox
+```
+
 ## Before you open a pull request
 
 ```bash
@@ -49,7 +57,7 @@ your real data folder is never touched either.
 - **Writes go through `writeJson`** in `src/main/store.ts`. It writes a temporary file and renames
   it, queues writes to the same file, and refuses to overwrite a file it cannot read.
 - **Network calls live in the main process.** The interface's content security policy blocks
-  outside requests on purpose.
+  scripts and requests to other origins on purpose. The one exception is images over https.
 - **Keep dependencies few.** The installed app has no runtime dependencies at all; everything is
   bundled. A new dependency needs a reason in the pull request.
 - **Never touch real data in tests.** Use a temporary folder, as the existing tests do.
@@ -64,6 +72,7 @@ the body for the reason.
 ## Releasing (maintainers)
 
 1. Update `version` in `package.json` and add a section to `CHANGELOG.md`.
-2. Commit, then tag: `git tag v0.2.0 && git push origin v0.2.0`.
-3. The release workflow builds the Windows, macOS and Linux installers, checks that each one
-   launches, and publishes the release with checksums.
+2. Optional: run the release workflow by hand (Actions → Release → Run workflow) for a dry run.
+3. Push the commit, then the tag: `git push origin main`, `git tag v0.2.0`, `git push origin v0.2.0`.
+4. The release workflow builds the Windows, macOS and Linux installers and launches them before it
+   publishes the release with checksums. A tag that does not match `package.json` stops it.

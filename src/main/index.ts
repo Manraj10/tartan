@@ -88,6 +88,11 @@ const iconFile = path.join(__dirname, '../../build', process.platform === 'win32
 
 /** Set only by the tray's Quit (and before-quit's flush) — every other close just hides. */
 let reallyQuit = false
+/**
+ * Whether this launch came from the login item. Windows passes --hidden; a macOS login item
+ * cannot carry arguments, so there the system says whether it opened us at login.
+ */
+let launchHidden = false
 let tray: Tray | null = null
 
 function createWindow(): void {
@@ -126,9 +131,11 @@ function createWindow(): void {
     },
   })
 
-  // --hidden is how the login item starts us: alive for the sync loop, no window in the face.
+  // A login start stays alive for the sync loop with no window in the face. Only the first window
+  // of a login start is hidden; one opened later (from the tray, say) is meant to be seen.
   win.on('ready-to-show', () => {
-    const hidden = process.argv.includes('--hidden')
+    const hidden = launchHidden
+    launchHidden = false
     // maximize() also SHOWS a hidden window, so a --hidden start waits for the first real show.
     if (saved?.maximized) {
       if (hidden) win.once('show', () => win.maximize())
@@ -144,6 +151,13 @@ function createWindow(): void {
    */
   win.on('close', (e) => {
     if (reallyQuit) return
+    // Many Linux desktops (stock GNOME among them) show no tray icons, so a hidden window there
+    // would leave an invisible process with no way to quit it. Closing quits instead.
+    if (process.platform === 'linux') {
+      reallyQuit = true
+      app.quit()
+      return
+    }
     e.preventDefault()
     win.hide()
   })
@@ -526,6 +540,9 @@ const buildTrayMenu = (): Menu =>
   ])
 
 void app.whenReady().then(async () => {
+  // Read first, before anything else can disturb the launch state macOS reports.
+  launchHidden =
+    process.argv.includes('--hidden') || (process.platform === 'darwin' && app.getLoginItemSettings().wasOpenedAtLogin === true)
   loadConfig()
   try {
     await ensureDataDir()
@@ -586,16 +603,27 @@ void app.whenReady().then(async () => {
       .finally(() => scheduleSync())
       .finally(() => void pollInbox())
   }, 15 * 60_000)
-  // macOS and Linux draw a tray image at its pixel size, and the .png is 256px.
-  tray = new Tray(process.platform === 'win32' ? iconFile : nativeImage.createFromPath(iconFile).resize({ width: 16, height: 16 }))
+  // macOS and Linux draw a tray image at its pixel size, and the .png is 1024px. On macOS a 32px
+  // bitmap marked as 2x stays sharp on Retina menu bars.
+  const png = nativeImage.createFromPath(iconFile)
+  tray = new Tray(
+    process.platform === 'win32'
+      ? iconFile
+      : process.platform === 'darwin'
+        ? nativeImage.createFromBuffer(png.resize({ width: 32, height: 32 }).toPNG(), { scaleFactor: 2 })
+        : png.resize({ width: 16, height: 16 }),
+  )
   tray.setToolTip('Tartan — syncing in the background')
   tray.setContextMenu(buildTrayMenu())
   tray.on('click', showMain)
   offerLoginItem()
 
-  // Registration fails silently if another app already owns the combo; that is acceptable.
-  globalShortcut.register('CommandOrControl+Shift+Space', toggleCapture)
-  globalShortcut.register('CommandOrControl+Shift+Q', async () => {
+  // Registration fails if another app already owns the combo; Tartan works without it.
+  if (!globalShortcut.register('CommandOrControl+Shift+Space', toggleCapture)) {
+    console.warn('Quick capture shortcut (Ctrl/Cmd+Shift+Space) is taken by another app')
+  }
+  // Control on every system: Cmd+Shift+Q is the macOS Log Out shortcut.
+  const quoted = globalShortcut.register('Control+Shift+Q', async () => {
     // Awaited: Electron 44 made readText asynchronous (on 43 the await is a no-op).
     const text = await clipboard.readText()
     if (!text.trim()) return
@@ -605,6 +633,7 @@ void app.whenReady().then(async () => {
     // tray, and the quote would land in a window nobody can see.
     showMain()?.webContents.send('quote', text)
   })
+  if (!quoted) console.warn('Quote shortcut (Ctrl+Shift+Q) is taken by another app')
   // The Dock icon: the window is usually parked in the tray, not closed.
   app.on('activate', showMain)
 })

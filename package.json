@@ -1,6 +1,7 @@
 {
   "name": "tartan",
   "productName": "Tartan",
+  "desktopName": "com.manraj.tartan.desktop",
   "version": "0.1.0",
   "description": "Your semester in one desktop app: classes, deadlines, notes with LaTeX, grades and course sites. Plain local files, no account.",
   "main": "./out/main/index.js",

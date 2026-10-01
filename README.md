@@ -7,7 +7,7 @@
 
 Your semester in one desktop app: classes, deadlines, notes with LaTeX, grades and your course
 sites, side by side. It runs on your machine and keeps everything as plain JSON and Markdown files
-you own. No account, no server, no subscription.
+you own. Free, with no account and no server.
 
 **[Download for Windows](https://github.com/Manraj10/tartan/releases/latest/download/Tartan-Windows-Setup.exe)**
 · macOS ([Apple silicon](https://github.com/Manraj10/tartan/releases/latest/download/Tartan-macOS-arm64.dmg),
@@ -45,15 +45,19 @@ code-signed yet, so the first launch needs one extra click:
   check the app; open **System Settings → Privacy & Security** and choose **Open Anyway**. Use the
   `arm64` file on Apple silicon (M1 and later) and `x64` on Intel Macs.
 - **Linux**: on Debian or Ubuntu, `sudo apt install ./Tartan-Linux.deb`. Anywhere else, make the
-  AppImage executable (`chmod +x Tartan-Linux.AppImage`) and run it. If an AppImage closes straight
-  away on Ubuntu 24.04 or later, run it with `--no-sandbox`, or use the `.deb`.
+  AppImage executable (`chmod +x Tartan-Linux.AppImage`) and run it; it needs no extra libraries.
+  On Ubuntu 24.04 and later the AppImage runs with Chromium's sandbox off, because the system blocks
+  it for AppImages. The `.deb` keeps the sandbox on, so prefer it there.
 
-Each release lists SHA-256 checksums in `SHA256SUMS.txt`. Uninstalling never deletes your data
-folder or settings.
+The Windows and Linux builds are for 64-bit Intel and AMD processors; Windows on ARM runs them
+through emulation. Each release lists SHA-256 checksums in `SHA256SUMS.txt`. Uninstalling never
+deletes your data folder or settings.
 
-Every installer is built and checked on GitHub's servers: CI runs the tests and a UI smoke test on
-Windows, macOS and Linux, and the release workflow launches each packaged app before publishing it.
-Day-to-day use so far has been on Windows 11.
+GitHub's servers build and test every release. CI runs the tests and a UI smoke test on Windows,
+macOS and Linux. Before publishing, the release workflow installs and launches the Windows installer
+and the `.deb`, launches the AppImage, and opens the Apple silicon app from its disk image. The
+Intel Mac build is packaged the same way but not launched. Day-to-day use so far has been on
+Windows 11.
 
 ### Run from source
 
@@ -70,6 +74,10 @@ npm run dev
 that download is interrupted, run `node node_modules/electron/install.js` to finish it.
 `npm run build` compiles into `out/`, `npm start` runs that build, and `npm run dist` builds an
 installer for the machine you are on into `dist/`.
+
+On Ubuntu 24.04 and later, Electron's sandbox helper needs root ownership once after `npm install`:
+`sudo chown root:root node_modules/electron/dist/chrome-sandbox` and then
+`sudo chmod 4755 node_modules/electron/dist/chrome-sandbox`.
 
 ## What it does
 
@@ -178,8 +186,8 @@ only part of the term, fill in the optional *From* and *Until* dates.
   already exist.
 
 For an SIO course number you have no space for, Tartan asks `course.apis.scottylabs.org` for its
-title and units. That is a student-run catalog, not a CMU service, and only the course numbers are
-sent. Pasting again updates rooms and end times but keeps a room or *From*/*Until* you typed yourself.
+title and units. ScottyLabs, a student group, runs that catalog; CMU does not. Only the course
+numbers are sent. Pasting again updates rooms and end times but keeps a room or *From*/*Until* you typed yourself.
 
 Classes are stored in `notes/_schedule.md`, one per line:
 
@@ -315,13 +323,16 @@ desktop app works without it.
 
 Worth knowing before you run it, because a desktop app that lives in the background should say so:
 
-- **Closing the window does not quit it.** Tartan hides to the tray and keeps running, which is what
-  lets the optional Google sync work. Quit from the tray menu.
-- **Start at login.** Once you save a Google Calendar address in Settings, Tartan adds itself to
-  startup one time, hidden, so the sync keeps running. The tray menu's *Start with Windows* (*Start at
-  login* on macOS and Linux) checkbox turns it off for good. Running from `npm run dev` never adds it.
-- **Two global shortcuts.** `Ctrl/Cmd+Shift+Space` opens the quick-capture window. `Ctrl/Cmd+Shift+Q`
-  pastes your clipboard as a quote into the note you have open (made for copying out of PDFs).
+- **Closing the window does not quit it** on Windows and macOS. Tartan hides to the tray (the menu
+  bar on macOS) and keeps running, which is what lets the optional Google sync work. Quit from the
+  tray menu. On Linux, where many desktops show no tray icons, closing the window quits.
+- **Start at login** (Windows and macOS). Once you save a Google Calendar address in Settings, Tartan
+  adds itself to startup one time, hidden, so the sync keeps running. The tray menu's *Start with
+  Windows* (*Start at login* on macOS) checkbox turns it off for good, and uninstalling on Windows
+  removes it too. Running from `npm run dev` never adds it.
+- **Two global shortcuts.** `Ctrl+Shift+Space` (`Cmd+Shift+Space` on macOS) opens the quick-capture
+  window. `Ctrl+Shift+Q` (Control on macOS too, since `Cmd+Shift+Q` logs you out) pastes your
+  clipboard as a quote into the note you have open, which is handy for copying out of PDFs.
 - **Site tabs are real browser views.** Signing into Canvas or Gradescope inside a tab stores that
   session in Tartan's own profile, separate from your browser. A sign-in survives quitting Tartan only
   if the site sets a lasting cookie; sites that rely on session cookies ask again next time.

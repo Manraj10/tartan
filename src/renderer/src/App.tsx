@@ -9,6 +9,7 @@ import Settings from './views/Settings'
 import Schedule from './views/Schedule'
 import Grind from './views/Grind'
 import Shortcuts from './components/Shortcuts'
+import { MOD } from './keys'
 import ErrorBoundary from './ErrorBoundary'
 import CommandPalette, { type Command } from './components/CommandPalette'
 import SyllabusImport from './components/SyllabusImport'
@@ -198,7 +199,7 @@ export default function App() {
       { id: 'import-syllabus', group: 'Actions', label: 'Import deadlines from a syllabus', run: () => setSyllabusOpen(true) },
       { id: 'export-ics', group: 'Actions', label: 'Export deadlines to a calendar file', hint: 'tartan.ics', run: () => void exportIcs() },
       { id: 'open-data', group: 'Actions', label: 'Open the data folder', run: () => void window.api.app.openDataDir() },
-      { id: 'toggle-rail', group: 'Actions', label: railHidden ? 'Show the sidebar' : 'Hide the sidebar', hint: 'Ctrl \\', run: () => setRailHidden((v) => !v) },
+      { id: 'toggle-rail', group: 'Actions', label: railHidden ? 'Show the sidebar' : 'Hide the sidebar', hint: `${MOD} \\`, run: () => setRailHidden((v) => !v) },
       { id: 'help', group: 'Actions', label: 'Keyboard shortcuts', hint: '?', run: () => setHelpOpen(true) },
     ]
 
@@ -306,7 +307,7 @@ export default function App() {
         {/* Search is the entrance to everything the sidebar no longer lists. */}
         <button className="nav-item" onClick={() => setPaletteOpen(true)}>
           <NavIcon name="search" />Search
-          <span className="count">Ctrl K</span>
+          <span className="count">{MOD} K</span>
         </button>
         <button className={navClass(route.kind === 'settings')} aria-current={route.kind === 'settings' ? 'page' : undefined} onClick={() => go({ kind: 'settings' })}>
           <NavIcon name="settings" />Settings
@@ -376,7 +377,7 @@ export default function App() {
             <span style={{ flex: 1, minWidth: 0 }}>{notice.text}</span>
             {notice.undo ? (
               <button className="btn ghost sm" onClick={undoLast}>
-                Undo <kbd>Ctrl Z</kbd>
+                Undo <kbd>{MOD} Z</kbd>
               </button>
             ) : null}
             <button className="btn ghost sm" aria-label="Dismiss" onClick={dismissNotice}>

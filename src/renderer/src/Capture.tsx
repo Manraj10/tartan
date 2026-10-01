@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { parseEntry, type Course } from '@shared/types'
+import { MOD } from './keys'
 
 /**
  * The quick-capture window: one line, one key. Enter still lands everything in notes/inbox.md with
@@ -141,10 +142,10 @@ export default function Capture() {
             ? error
             : preview
               ? preview.title.trim()
-                ? `Enter → inbox · Ctrl Enter → ${preview.every ? 'recurring' : preview.due ? 'deadline' : 'todo'}${preview.courseId ? ` (${preview.courseId})` : ''} · Esc`
+                ? `Enter → inbox · ${MOD} Enter → ${preview.every ? 'recurring' : preview.due ? 'deadline' : 'todo'}${preview.courseId ? ` (${preview.courseId})` : ''} · Esc`
                 : // Ctrl Enter files nothing without a title; Enter still sends the raw line to the inbox.
                   'Needs a title · Enter → inbox · Esc'
-              : 'Enter saves to your inbox note · Ctrl+Enter files a deadline or todo · Esc closes'}
+              : `Enter saves to your inbox note · ${MOD}+Enter files a deadline or todo · Esc closes`}
       </div>
     </div>
   )

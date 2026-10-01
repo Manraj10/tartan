@@ -16,6 +16,9 @@ files:
   - package.json
 asar: true
 publish: null
+toolsets:
+  # The static AppImage runtime starts without libfuse2, which stock Ubuntu no longer ships.
+  appimage: '1.0.3'
 
 win:
   target: nsis
@@ -25,6 +28,7 @@ nsis:
   oneClick: true
   perMachine: false
   deleteAppDataOnUninstall: false # your semester and settings survive an uninstall
+  include: build/installer.nsh # also removes the start-at-login entry
   shortcutName: Tartan
   artifactName: Tartan-Windows-Setup.${ext}
 
@@ -47,6 +51,9 @@ linux:
   category: Office
   maintainer: Manraj <158596509+Manraj10@users.noreply.github.com>
   synopsis: Your semester in one desktop app
+  # Names the .desktop file after package.json desktopName (com.manraj.tartan), which is also
+  # Electron's Wayland app_id: GNOME matches windows and grants global shortcuts by it.
+  syncDesktopName: true
 appImage:
   artifactName: Tartan-Linux.${ext}
 deb:
