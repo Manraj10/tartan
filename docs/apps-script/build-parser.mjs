@@ -28,5 +28,14 @@ const marker = /var PARSER_JS_ =\s*'(?:[^'\\]|\\[\s\S])*';/
 if (!marker.test(gs)) throw new Error('PARSER_JS_ marker not found in Code.gs')
 // A replacer function, or $-sequences inside the minified bundle corrupt the splice.
 const next = gs.replace(marker, () => `var PARSER_JS_ = '${escaped}';`)
-fs.writeFileSync(gsPath, next)
-console.log(`inlined ${js.length} chars of parser (escaped ${escaped.length}) into Code.gs`)
+// `--check` (run by npm test) fails instead of writing, so a parser change cannot ship without it.
+if (process.argv.includes('--check')) {
+  if (next !== gs) {
+    console.error('Code.gs carries an out-of-date copy of the parser. Run: node docs/apps-script/build-parser.mjs')
+    process.exit(1)
+  }
+  console.log('Phone page parser: Code.gs matches src/shared/types.ts.')
+} else {
+  fs.writeFileSync(gsPath, next)
+  console.log(`inlined ${js.length} chars of parser (escaped ${escaped.length}) into Code.gs`)
+}

@@ -112,7 +112,9 @@ The first launch creates your data folder with three placeholder spaces (`01-101
 
 ## Quick add
 
-The box on Today, the quick-capture window and the Todos list all read the same short syntax:
+The box on Today reads a short syntax. In the quick-capture window (`Ctrl+Shift+Space`), Enter
+saves the line as it is to `notes/inbox.md`, and `Ctrl+Enter` (`Cmd+Enter` on macOS) files it using
+the same syntax:
 
 | You type | You get |
 | --- | --- |
@@ -330,8 +332,9 @@ Worth knowing before you run it, because a desktop app that lives in the backgro
   adds itself to startup one time, hidden, so the sync keeps running. The tray menu's *Start with
   Windows* (*Start at login* on macOS) checkbox turns it off for good, and uninstalling on Windows
   removes it too. Running from `npm run dev` never adds it.
-- **Two global shortcuts.** `Ctrl+Shift+Space` (`Cmd+Shift+Space` on macOS) opens the quick-capture
-  window. `Ctrl+Shift+Q` (Control on macOS too, since `Cmd+Shift+Q` logs you out) pastes your
+- **Two global shortcuts.** `Ctrl+Shift+Space` (`Cmd+Shift+Space` on macOS) opens a small capture
+  window from any app: Enter drops the line into your inbox note, and `Ctrl+Enter` (`Cmd+Enter`)
+  files it as a deadline, todo or repeat. `Ctrl+Shift+Q` (Control on macOS too, since `Cmd+Shift+Q` logs you out) pastes your
   clipboard as a quote into the note you have open, which is handy for copying out of PDFs.
 - **Site tabs are real browser views.** Signing into Canvas or Gradescope inside a tab stores that
   session in Tartan's own profile, separate from your browser. A sign-in survives quitting Tartan only

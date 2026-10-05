@@ -8,9 +8,9 @@ that has to happen while the laptop is shut happens on Google's side.
 - `appsscript.json` — optional. Carries the timezone, the Tasks service and the deploy settings,
   so pasting it saves a few of the clicks below.
 
-Deadlines and classes go to **Google Calendar**. Todos go to **Google Tasks**, one way — ticking
-something off on the phone does not come back, and the next sync re-opens it. Tartan is the source
-of truth.
+Deadlines and classes go to **Google Calendar**. Todos go to **Google Tasks**, one way: ticking one
+off in the Google Tasks app does not come back, and the next sync re-opens it. Tartan is the source
+of truth. To tick things off from your phone, use the phone page (below), which does reach Tartan.
 
 ## Setup
 
@@ -63,6 +63,21 @@ Generate the secret first: Tartan → Settings → Google Calendar → **Generat
 
 14. Tartan → Settings → Google Calendar → paste the `/exec` URL → check the secret matches → **Save**
     → **Sync now**.
+
+## The phone page
+
+Open your `/exec` URL with `?k=<your TARTAN_VIEW_KEY>` on your phone and add it to the home screen.
+The top of the page is today as a timeline: your classes, what is due, and the timed events from any
+other calendar you keep visible in Google Calendar (a school account or a club, say). Below it are
+Overdue, Due today, This week and your Todos. It reads the same calendar your reminders come from,
+so the two always agree.
+
+Ticking a deadline or todo there, or adding a todo, goes into a queue on Google's side. Tartan picks
+the queue up whenever it checks in: at launch, when you switch back to its window, and every 15
+minutes while it runs. If the laptop is off all day, those changes wait until Tartan next starts.
+
+Anyone holding the `?k=` link sees everything on that page, events from your other calendars
+included, so keep the link private.
 
 ## What this does to your calendar
 

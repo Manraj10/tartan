@@ -4,6 +4,17 @@ All notable changes to Tartan are listed here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [0.1.1] - 2026-10-05
+
+### Changed
+
+- The Schedule page explains what SIO is (CMU's student information system) and shows the one-line
+  format that works for any school, right where you start.
+- The optional phone page now previews what you type with the same quick-add parser as the desktop
+  app. Redeploy the Apps Script (see docs/apps-script/README.md) to pick it up.
+- The phone sync guide describes the phone page: what it shows, how ticks reach Tartan, and who can
+  see it.
+
 ## [0.1.0] - 2026-10-01
 
 The first public release.
@@ -38,4 +49,5 @@ README explains what to click.
 
 Everything lives in one folder of plain JSON and Markdown files that you own.
 
+[0.1.1]: https://github.com/Manraj10/tartan/releases/tag/v0.1.1
 [0.1.0]: https://github.com/Manraj10/tartan/releases/tag/v0.1.0

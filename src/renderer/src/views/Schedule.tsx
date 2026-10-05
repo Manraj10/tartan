@@ -572,7 +572,7 @@ export default function Schedule() {
         addedText +
           (skippedText ||
             (numbers.length
-              ? `No class times found for ${numbers.join(', ')}. Paste the whole SIO block, course numbers and all.`
+              ? `No class times found for ${numbers.join(', ')}. Paste the whole block from CMU's SIO, course numbers and all.`
               : 'No classes recognised. Each line needs a course you have added, its days and a time range, like CS 101 MWF 10:00AM-10:50AM Hall 5.')),
       )
       return
@@ -742,7 +742,7 @@ export default function Schedule() {
         {!ready ? null : meetings.length === 0 ? (
           <EmptyState
             headline="No classes yet."
-            detail="Paste the whole block from SIO, or one line per class, and Tartan reads the days, times and rooms out of it."
+            detail="Paste your schedule from CMU's SIO, or one line per class from any school (CS 101 MWF 10:00AM-10:50AM Hall 5), and Tartan reads the days, times and rooms out of it."
             action={{ label: 'Paste schedule', run: () => setPanel('paste') }}
           />
         ) : (
