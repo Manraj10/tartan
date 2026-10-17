@@ -19,7 +19,7 @@ import { parseGrades, unreadable, type GradesState } from '../shared/grades'
 import { importFeedUrl } from './feeds'
 
 /**
- * Everything lives as plain files under Documents/Semester so that Claude Code,
+ * Everything lives as plain files under Documents/Semester so that a coding agent,
  * a text editor, or a sync client can read and write the same data this app does.
  * There is no database and no server on purpose.
  */
@@ -326,7 +326,7 @@ export async function ensureDataDir(): Promise<void> {
       '- `deadlines.json` — everything due',
       '- `notes/<course>/*.md` — your notes, plain markdown',
       '',
-      'Edit any of it by hand or point Claude Code at it. The app reads the files on focus.',
+      'Edit any of it by hand or point a coding agent at it. The app reads the files on focus.',
       '',
     ].join('\n'),
   )

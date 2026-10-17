@@ -162,7 +162,7 @@ Semester/
   .cache/feeds/       downloaded feeds and the items you deleted from them
 ```
 
-That is the whole database. Edit it in any text editor, sync it with anything, or point Claude Code
+That is the whole database. Edit it in any text editor, sync it with anything, or point a coding agent
 at it. The app re-reads it when its window comes back into focus, so most outside edits show up when
 you switch back. The Schedule page, the Grades tab and the Term dates card read once when you open
 them, and an open note is only replaced when you have no unsaved typing.

@@ -239,7 +239,7 @@ export default function Settings() {
               </button>
             </div>
             <p className="muted" style={{ margin: 0 }}>
-              Everything lives in that folder as plain JSON and markdown — edit it by hand or point Claude Code at it.
+              Everything lives in that folder as plain JSON and markdown — edit it by hand or point a coding agent at it.
               Tartan re-reads the files every time the window regains focus.
             </p>
             <p className="faint" style={{ margin: 0, fontSize: 'var(--fs-sm)' }}>
